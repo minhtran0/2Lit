@@ -4,8 +4,6 @@
 
 	if (isset($_POST['submit'])) {
 		$success = true;
-		$first_name = trim(htmlspecialchars($_POST['first-name']));
-		$last_name = trim(htmlspecialchars($_POST['last-name']));
 		$username = trim(htmlspecialchars($_POST['username']));
 		$query = "SELECT username FROM lit_user WHERE username = '$username';";
 		$data = @mysqli_query($connection, $query);
@@ -25,12 +23,28 @@
 		}
 
 		if ($success) {
-			$query = "INSERT INTO lit_user (first_name, last_name, username, password, email, city, state) VALUES (";
-			$query .= "'$first_name', '$last_name', '$username', '$password', '$email', '$city', '$state');";
+			$password = password_hash($password);
+			$query = "INSERT INTO lit_user (username, password, email, city, state) VALUES (";
+			$query .= "'$username', '$password', '$email', '$city', '$state');";
 			$data = @mysqli_query($connection, $query);
 			if (!data) {
 				die('Database error. Could not enter data. ' . @mysqli_error());
 			}
+			unset($_POST['username']);
+			unset($_POST['password']);
+			unset($_POST['email']);
+			unset($_POST['city']);
+			unset($_POST['state']);
+
+			$query = "SELECT user_id FROM lit_user WHERE username = '$username'";
+			$data = @mysqli_query($connection, $query);
+			if (@mysqli_num_rows($data) == 1) {
+				$_SESSION['userid'] = $data['user_id'];
+				$_SESSION['city'] = $data['city'];
+				$_SESSION['state'] = $data['state'];
+			}
+
+			header("Location: "); // Bring user to city/state index
 		}
 
 	}
@@ -59,21 +73,12 @@
 		</div>
 		<div class="col-md-8" id="contentid"> <!-- The main content column -->
 			
-			<h2 class="subheading">Registration</h2>
+			<h2 class="subheading">Create an acccount</h2>
 
 			<div class="row well" id="registrationid">
 				<div class="col-md-2"></div>
 				<div class="col-md-8">
 				<form method="post">								<!-- Registration form start-->
-				  <div class="form-group">
-				  <label for="">First Name</label>
-				    <input type="text" class="form-control" id="first-name" name="first-name" placeholder="First Name" required>
-				  </div>
-				  <div class="form-group">
-				  <label for="">Last Name</label>
-				    <input type="text" class="form-control" id="last-name" name="last-name" placeholder="Last Name" required>
-				  </div>
-				  <br/><br/>
 				   <div class="form-group">
 				  <label for="">Username</label>
 				    <input type="text" class="form-control" id="username" name="username" placeholder="Username" required>
