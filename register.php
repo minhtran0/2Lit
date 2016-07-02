@@ -1,20 +1,38 @@
 <?php
 
-	include_once global.php;
+	include_once "global.php";
 
 	if (isset($_POST['submit'])) {
 		$success = true;
-		$username = trim(htmlspecialchars($_POST['username']));
-		$query = "SELECT username FROM lit_user WHERE username = '$username';";
-		$data = @mysqli_query($connection, $query);
-		if (@mysqli_num_rows($data) > 0) {
-			$success = false;
-			$_SESSION['usernameError'] = "User name already taken";
+		$username1 = trim($_POST['username']);
+		$query = "SELECT username FROM lit_user WHERE username = ?";
+		if ($stmt = $conn->prepare($query)) {
+			$stmt->bind_param("s", $username1);
+			$stmt->execute();
+			$stmt->bind_result($username);
+			$stmt->store_result();
+
+			if ($stmt->num_rows > 0) {
+				$success = false;
+				$_SESSION['usernameError'] = "User name already taken";
+			}
+			else {
+				$query = "INSERT INTO lit_user (username) VALUES (?)";
+				$stmt = $conn->prepare($query);
+				$stmt->bind_param("s", $username1);
+				$stmt->execute();
+			}
+			$stmt->close();
 		}
-		$password = trim(htmlspecialchars($_POST['password']));
+		$password = $_POST['password'];
+		$password2 = $_POST['password_again'];
 		if (strlen($password) < 8) {
 			$success = false;
-			$_SESSION['passwordError'] = "Password must at least 8 characters long"
+			$_SESSION['passwordError'] = "Password must at least 8 characters long";
+		}
+		if ($password != $password_again) {
+			$success = false;
+			$_SESSION['passwordError'] = "Passwords do not match";
 		}
 		$email = trim($_POST['email']);
 		if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -22,34 +40,65 @@
 		    $_SESSION['emailError'] = "Email address is not valid";
 		}
 
+		// Find city/state
+		$city1 = trim($_POST['city']);
+		$state1 = trim($_POST['state']);
+		$query = "SELECT city_id FROM lit_cities WHERE city = ? AND state = ?";
+		if ($stmt = $conn->prepare($query) & success) {
+			$stmt->bind_param("ss", $city1, $state1);
+			$stmt->execute();
+			$stmt->bind_result($city_id);
+			$stmt->store_result();
+
+			if ($stmt->num_rows > 0) {
+				// Username is unique and is already added to database
+				$query = "UPDATE lit_user SET city_id = '$city_id' WHERE username = ?";
+				$stmt = $conn->prepare($query);
+				$stmt->bind_param("s", $username1);
+				$stmt->execute();
+			}
+			else {
+				$query = "INSERT INTO lit_cities (city, state) VALUES (?, ?)";
+				$stmt = $conn->prepare($query);
+				$stmt->bind_param("ss", $city1, $state1);
+				$stmt->execute();
+			}
+
+			$stmt->close();
+		}
+
 		if ($success) {
 			$password = password_hash($password);
-			$query = "INSERT INTO lit_user (username, password, email, city, state) VALUES (";
-			$query .= "'$username', '$password', '$email', '$city', '$state');";
-			$data = @mysqli_query($connection, $query);
-			if (!data) {
-				die('Database error. Could not enter data. ' . @mysqli_error());
+			$query = "SELECT user_id FROM lit_user WHERE username = ?";
+			if ($stmt = $conn->prepare($query)) {
+				$stmt->bind_param("s", $username1);
+				$stmt->execute();
+				$stmt->bind_result($user_id);
+				$stmt->close();
 			}
+			$query = "UPDATE lit_user SET password = '$password', email = '$email' WHERE user_id = '$user_id'";
+			$data = $conn->query($query);
+
 			unset($_POST['username']);
 			unset($_POST['password']);
 			unset($_POST['email']);
 			unset($_POST['city']);
 			unset($_POST['state']);
 
-			$query = "SELECT user_id FROM lit_user WHERE username = '$username'";
-			$data = @mysqli_query($connection, $query);
-			if (@mysqli_num_rows($data) == 1) {
+			$query = "SELECT user_id FROM lit_user WHERE user_id = '$user_id'";
+			$data = $conn->query($query);
+			if ($data->num_rows == 1) {
 				$_SESSION['userid'] = $data['user_id'];
 				$_SESSION['city'] = $data['city'];
 				$_SESSION['state'] = $data['state'];
 			}
 
-			header("Location: "); // Bring user to city/state index
+			header("Location: "); // Bring user to city index
 		}
 
 	}
 
-	@mysqli_close($connection);
+	$conn->close();;
 ?>
 
 
@@ -78,7 +127,7 @@
 			<div class="row well" id="registrationid">
 				<div class="col-md-2"></div>
 				<div class="col-md-8">
-				<form method="post">								<!-- Registration form start-->
+				<form method="post" action="register.php">								<!-- Registration form start-->
 				   <div class="form-group">
 				  <label for="">Username</label>
 				    <input type="text" class="form-control" id="username" name="username" placeholder="Username" required>
@@ -117,6 +166,10 @@
 				    <label for="password">Password</label>
 				    <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
 				  </div>
+				  <div class="form-group">
+				    <label for="password_again">Enter your password again</label>
+				    <input type="password" class="form-control" id="password_again" name="password_again" placeholder="Password" required>
+				  </div>
 				  <?php
 				  	if (isset($_SESSION['password'])) {
 				  		echo "<div class=\"form-group\">";
@@ -130,13 +183,20 @@
 						unset($_SESSION['passwordError']);
 				  	}
 				  ?>
-				  <div class="form-group">
-				  <label for="">City</label>
-				    <input type="text" class="form-control" id="city" name="city" placeholder="City" required>
-				  </div>
-				  <div class="form-group">
-				  <label for="">State</label>
-				    <input type="text" class="form-control" id="state" name="state" placeholder="state" required>
+				  <div class="form-horizontal">
+					  <div class="col-sm-5">
+						  <div class="form-group">
+						    <label for="city">City</label>
+						    <input type="text" class="form-control" id="city" name="city" placeholder="City" required>
+						  </div>
+					  </div>
+					  <div class="col-sm-2"></div>
+					  <div class="col-sm-5">
+						  <div class="form-group">
+						    <label for="state">State</label>
+						    <input type="text" class="form-control" id="state" name="state" placeholder="State" required>
+						  </div>
+					  </div>
 				  </div>
 				  <button type="submit" class="btn btn-default">Submit</button>
 				</form>							<!-- Registration form END-->

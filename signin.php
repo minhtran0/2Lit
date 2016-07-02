@@ -1,9 +1,13 @@
+
+<!-- Page need to be updated for security -->
+
+
 <?php
 
-	include_once global.php;
+	include_once "global.php";
 
 	if (isset($_SESSION['userid'])) {
-		header("Location: ");	// Bring the user to the city/state 2Lit page
+		header("Location: ");	// Bring the user to the college/state 2Lit page
 	}
 
 	if (isset($_POST['submit'])) {
@@ -22,10 +26,9 @@
 
 		if ($success) {
 			$_SESSION['userid'] = $username;
-			$_SESSION['city'] = $data['city'];
-			$_SESSION['state'] = $data['state'];
+			$_SESSION['college'] = $data['college'];
 
-			header("Location ");		// Bring the user to the city/state 2Lit page
+			header("Location ");		// Bring the user to the college 2Lit page
 		}
 		else {
 			$_SESSION['error'] = "Your username or password is incorrect".

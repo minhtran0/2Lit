@@ -1,6 +1,6 @@
 <?php
 
-	include_once global.php;
+	include_once "global.php";
 
 	if (!isset($_SESSION['userid'])) {
 		header("Location ");		// Bring user to homepage if they're not signed in
@@ -10,10 +10,9 @@
 		
 	}
 
-	@mysqli_close($connection);
+	$conn->close();
 
 ?>
-
 
 <html>
 <head>
@@ -39,12 +38,13 @@
 
 			<div class="row well" id="contentid">
 
-				<div class="col-md-1"></div>
-				<div class="col-md-10">	
+				<div class="col-md-2"></div>
+				<div class="col-md-8">	
+
 
 				<form method="post">								<!-- Registration form start-->
-				   <div class="form-group">
-				   <?php
+				  <div class="form-group">
+				  <?php
 				  	if (isset($_SESSION['error'])) {
 				  		echo "<div class=\"form-group\">";
 				  		echo "<label for=\"error\" class=\"col-sm-4 control-label\"></label>";
@@ -61,13 +61,36 @@
 				    <input type="text" class="form-control" id="title" name="title" placeholder="Title" required>
 				  </div>
 				  <div class="form-group">
-				    <label for="password">Password</label>
-				    <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
+				    <label for="date_event">Date of event</label>
+				    <input type="date" class="form-control" id="date_event" name="date_event" placeholder="Date" required>
+				  </div>
+				  <div class="form-group">
+				  <label for="title">Location of event</label>
+				    <input type="text" class="form-control" id="location" name="location" placeholder="123 Main St." required>
+				  </div>
+				  <div class="form-horizontal">
+					  <div class="col-sm-5">
+						  <div class="form-group">
+						    <label for="start_time">Time event starts</label>
+						    <input type="time" class="form-control" id="start_time" name="start_time" placeholder="" required>
+						  </div>
+					  </div>
+					  <div class="col-sm-2"></div>
+					  <div class="col-sm-5">
+						  <div class="form-group">
+						    <label for="end_time">Time event ends</label>
+						    <input type="time" class="form-control" id="end_time" name="end_time" placeholder="" required>
+						  </div>
+					  </div>
+				  </div>
+				  <div class="form-group">
+				    <label for="description">Description of event</label>
+				 	<textarea class="form-control" id="description" name="description" rows="7" required></textarea>
 				  </div>
 				  <button type="submit" class="btn btn-default">Submit</button>
 				</form>							<!-- Registration form END-->
 				</div>
-				<div class="col-md-1"></div>
+				<div class="col-md-2"></div>
 
 			</div>
 		</div>								<!-- End main content column-->
