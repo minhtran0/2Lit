@@ -2,82 +2,95 @@
 
 	include_once "global.php";
 
-	if (isset($_POST['submit'])) {
-		$success = true;
-		$username1 = trim($_POST['username']);
-		$query = "SELECT username FROM lit_user WHERE username = ?";
-		if ($stmt = $conn->prepare($query)) {
-			$stmt->bind_param("s", $username1);
-			$stmt->execute();
-			$stmt->bind_result($username);
-			$stmt->store_result();
+	if (isset($_SESSION['userid']) && isset($_SESSION['cityid'])) {
+		header("Location: view.php?city=$_SESSION['cityid']&sort=1");	// Bring the user to the college/state 2Lit page
+	}
 
-			if ($stmt->num_rows > 0) {
-				$success = false;
-				$_SESSION['usernameError'] = "User name already taken";
-			}
-			else {
-				$query = "INSERT INTO lit_user (username) VALUES (?)";
-				$stmt = $conn->prepare($query);
-				$stmt->bind_param("s", $username1);
-				$stmt->execute();
-			}
-			$stmt->close();
-		}
-		$password = $_POST['password'];
-		$password2 = $_POST['password_again'];
-		if (strlen($password) < 8) {
+	if (isset($_POST['submit'])) {	
+		$success = true;
+		$username = strtolower($_POST['username']);
+		if (!preg_match('/^[A-Za-z0-9_]+$/', $username)) {
 			$success = false;
-			$_SESSION['passwordError'] = "Password must at least 8 characters long";
+			$_SESSION['usernameError'] = " Username must be alpha-numeric or '_'";
+		}
+		if (strlen($username) < 6 && strlen($username) > 20) {
+			$success = false;
+			$_SESSION['usernameError'] = " Username must be 6-20 characters long";
+		}
+		if ($success) {
+			$query = "SELECT username FROM lit_user WHERE username = '$username'";
+			$data = $conn->query($query);
+			if (!data)	printf("Errormessage: %s\n", $conn->error);
+			if ($data->num_rows > 0) {
+				$success = false;
+				$_SESSION['usernameError'] = " Username is already taken";
+			}
+		}
+		
+		$password = $_POST['password'];
+		$password_again = $_POST['password_again'];
+		if (strlen($password) < 8) {
+			$success = false;	
+			$_SESSION['passwordError'] = " Password must at least 8 characters long";
 		}
 		if ($password != $password_again) {
 			$success = false;
-			$_SESSION['passwordError'] = "Passwords do not match";
+			$_SESSION['passwordError'] = " Passwords do not match";
 		}
 		$email = trim($_POST['email']);
 		if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
 			$success = false;
-		    $_SESSION['emailError'] = "Email address is not valid";
+		    $_SESSION['emailError'] = " Email address is not valid";
+		}
+		if ($success) {
+			$query = "SELECT email FROM lit_user WHERE email = '$email'";
+			$data = $conn->query($query);
+			if (!data)	printf("Errormessage: %s\n", $conn->error);
+			if ($data->num_rows > 0) {
+				$success = false;
+				$_SESSION['emailError'] = " Email is already used";
+			}
 		}
 
 		// Find city/state
-		$city1 = trim($_POST['city']);
-		$state1 = trim($_POST['state']);
-		$query = "SELECT city_id FROM lit_cities WHERE city = ? AND state = ?";
-		if ($stmt = $conn->prepare($query) & success) {
-			$stmt->bind_param("ss", $city1, $state1);
-			$stmt->execute();
-			$stmt->bind_result($city_id);
-			$stmt->store_result();
+		$city = strtolower(trim($_POST['city']));
+		$state = strtolower(trim($_POST['state']));
+		if (!preg_match('/^[a-z\d\-_\s]+$/i', $city)) {
+			$success = false;
+			$_SESSION['locationError'] = " Location must be alpha-numeric";
+		}
+		if (!preg_match('/^[a-z\d\-_\s]+$/i', $state)) {
+			$success = false;
+			$_SESSION['locationError'] = " Location must be alpha-numeric";
+		}
+		if($success) {
+			$query = "SELECT city_id FROM lit_cities WHERE city = '$city' AND state = '$state'";
+			$result = $conn->query($query);
+			$data = $result->fetch_assoc();
+			if (!data)	printf("Errormessage: %s\n", $conn->error);
 
-			if ($stmt->num_rows > 0) {
-				// Username is unique and is already added to database
-				$query = "UPDATE lit_user SET city_id = '$city_id' WHERE username = ?";
-				$stmt = $conn->prepare($query);
-				$stmt->bind_param("s", $username1);
-				$stmt->execute();
+			if ($result->num_rows > 0) {
+				$city_id = $data['city_id'];
 			}
 			else {
-				$query = "INSERT INTO lit_cities (city, state) VALUES (?, ?)";
-				$stmt = $conn->prepare($query);
-				$stmt->bind_param("ss", $city1, $state1);
-				$stmt->execute();
+				$query = "INSERT INTO lit_cities (city, state) VALUES ('$city', '$state')";
+				$conn->query($query);
+				if (!data)	printf("Errormessage: %s\n", $conn->error);
+				$query = "SELECT city_id FROM lit_cities WHERE city = '$city' AND state = '$state'";
+				$result = $conn->query($query);
+				$data = $result->fetch_assoc();
+				if (!data)	printf("Errormessage: %s\n", $conn->error);
+				$city_id = $data['city_id'];
 			}
-
-			$stmt->close();
 		}
 
 		if ($success) {
-			$password = password_hash($password);
-			$query = "SELECT user_id FROM lit_user WHERE username = ?";
-			if ($stmt = $conn->prepare($query)) {
-				$stmt->bind_param("s", $username1);
-				$stmt->execute();
-				$stmt->bind_result($user_id);
-				$stmt->close();
-			}
-			$query = "UPDATE lit_user SET password = '$password', email = '$email' WHERE user_id = '$user_id'";
-			$data = $conn->query($query);
+			$passwordhash = sha1($password);		// This has to be replaced. SHA1 is not a strong hash.
+
+			$query = "INSERT INTO lit_user (username, password, email, city_id) VALUES ";
+			$query .= "('$username', '$passwordhash', '$email', '$city_id')";
+			$conn->query($query);
+			if (!data)	printf("Errormessage: %s\n", $conn->error);
 
 			unset($_POST['username']);
 			unset($_POST['password']);
@@ -86,14 +99,15 @@
 			unset($_POST['state']);
 
 			$query = "SELECT user_id FROM lit_user WHERE user_id = '$user_id'";
-			$data = $conn->query($query);
+			$result = $conn->query($query);
+			$data = $result->fetch_assoc();
+			if (!data)	printf("Errormessage: %s\n", $conn->error);
 			if ($data->num_rows == 1) {
 				$_SESSION['userid'] = $data['user_id'];
-				$_SESSION['city'] = $data['city'];
-				$_SESSION['state'] = $data['state'];
+				$_SESSION['cityid'] = $data['city_id'];
 			}
 
-			header("Location: "); // Bring user to city index
+			header("Location: view.php?city=$_SESSION['cityid']&sort=1"); // Bring user to city index
 		}
 
 	}
@@ -127,16 +141,15 @@
 			<div class="row well" id="registrationid">
 				<div class="col-md-2"></div>
 				<div class="col-md-8">
-				<form method="post" action="register.php">								<!-- Registration form start-->
+				<form method="post">								<!-- Registration form start-->
 				   <div class="form-group">
 				  <label for="">Username</label>
-				    <input type="text" class="form-control" id="username" name="username" placeholder="Username" required>
+				    <input type="text" class="form-control" id="username" name="username" placeholder="Username" method="post" value="<?php if (isset($_POST['username'])) echo $_POST['username'];?>" required>
 				  </div>
 				  <?php
-				  	if (isset($_SESSION['username'])) {
-				  		echo "<div class=\"form-group\">";
-				  		echo "<label for=\"usernameError\" class=\"col-sm-4 control-label\"></label>";
-				  		echo "<div class=\"alert alert-danger col-md-4\" role=\"alert\">";
+				  	if (isset($_SESSION['usernameError'])) {
+				  		echo "<div class=\"form-group error-box\">";
+				  		echo "<div class=\"alert alert-danger\" role=\"alert\">";
 						echo "<span class=\"glyphicon glyphicon-exclamation-sign\" aria-hidden=\"true\"></span>";
 						echo "<span class=\"sr-only\">Error:</span>";
 						echo  $_SESSION['usernameError'];
@@ -147,13 +160,12 @@
 				  ?>
 				  <div class="form-group">
 				    <label for="email">Email address</label>
-				    <input type="email" class="form-control" id="email" name="email" placeholder="Email" required>
+				    <input type="email" class="form-control" id="email" name="email" placeholder="Email" method="post" value="<?php if (isset($_POST['email'])) echo $_POST['email'];?>" required>
 				  </div>
 				  <?php
-				  	if (isset($_SESSION['email'])) {
-				  		echo "<div class=\"form-group\">";
-				  		echo "<label for=\"emailError\" class=\"col-sm-4 control-label\"></label>";
-				  		echo "<div class=\"alert alert-danger col-md-4\" role=\"alert\">";
+				  	if (isset($_SESSION['emailError'])) {
+				  		echo "<div class=\"form-group error-box\">";
+				  		echo "<div class=\"alert alert-danger\" role=\"alert\">";
 						echo "<span class=\"glyphicon glyphicon-exclamation-sign\" aria-hidden=\"true\"></span>";
 						echo "<span class=\"sr-only\">Error:</span>";
 						echo  $_SESSION['emailError'];
@@ -164,17 +176,16 @@
 				  ?>
 				  <div class="form-group">
 				    <label for="password">Password</label>
-				    <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
+				    <input type="password" class="form-control" id="password" name="password" placeholder="Password" method="post" required>
 				  </div>
 				  <div class="form-group">
 				    <label for="password_again">Enter your password again</label>
-				    <input type="password" class="form-control" id="password_again" name="password_again" placeholder="Password" required>
+				    <input type="password" class="form-control" id="password_again" name="password_again" placeholder="Password" method="post" required>
 				  </div>
 				  <?php
-				  	if (isset($_SESSION['password'])) {
-				  		echo "<div class=\"form-group\">";
-				  		echo "<label for=\"passwordError\" class=\"col-sm-4 control-label\"></label>";
-				  		echo "<div class=\"alert alert-danger col-md-4\" role=\"alert\">";
+				  	if (isset($_SESSION['passwordError'])) {
+				  		echo "<div class=\"form-group error-box\">";
+				  		echo "<div class=\"alert alert-danger\" role=\"alert\">";
 						echo "<span class=\"glyphicon glyphicon-exclamation-sign\" aria-hidden=\"true\"></span>";
 						echo "<span class=\"sr-only\">Error:</span>";
 						echo  $_SESSION['passwordError'];
@@ -187,18 +198,30 @@
 					  <div class="col-sm-5">
 						  <div class="form-group">
 						    <label for="city">City</label>
-						    <input type="text" class="form-control" id="city" name="city" placeholder="City" required>
+						    <input type="text" class="form-control" id="city" name="city" placeholder="City" method="post" value="<?php if (isset($_POST['city'])) echo $_POST['city'];?>" required>
 						  </div>
 					  </div>
 					  <div class="col-sm-2"></div>
 					  <div class="col-sm-5">
 						  <div class="form-group">
 						    <label for="state">State</label>
-						    <input type="text" class="form-control" id="state" name="state" placeholder="State" required>
+						    <input type="text" class="form-control" id="state" name="state" placeholder="State" method="post" value="<?php if (isset($_POST['state'])) echo $_POST['state'];?>" required>
 						  </div>
 					  </div>
 				  </div>
-				  <button type="submit" class="btn btn-default">Submit</button>
+				  <?php
+				  	if (isset($_SESSION['locationError'])) {
+				  		echo "<div class=\"form-group error-box\">";
+				  		echo "<div class=\"alert alert-danger\" role=\"alert\">";
+						echo "<span class=\"glyphicon glyphicon-exclamation-sign\" aria-hidden=\"true\"></span>";
+						echo "<span class=\"sr-only\">Error:</span>";
+						echo  $_SESSION['locationError'];
+						echo "</div>";
+						echo "</div>";
+						unset($_SESSION['locationError']);
+				  	}
+				  ?>
+				  <button type="submit" class="btn btn-default" name="submit" id="submit" method="post">Submit</button>
 				</form>							<!-- Registration form END-->
 				</div>
 				<div class="col-md-2"></div>

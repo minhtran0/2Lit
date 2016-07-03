@@ -1,41 +1,45 @@
-
-<!-- Page need to be updated for security -->
-
-
 <?php
 
 	include_once "global.php";
 
-	if (isset($_SESSION['userid'])) {
-		header("Location: ");	// Bring the user to the college/state 2Lit page
+	if (isset($_SESSION['userid']) && isset($_SESSION['cityid'])) {
+		header("Location: view.php?city=$_SESSION['cityid']&sort=1");	// Bring the user to the college/state 2Lit page
 	}
 
 	if (isset($_POST['submit'])) {
-		$username = htmlspecialchars(trim($_POST['username']));
-		$password = htmlspecialchars(trim($_POST['password']));
+		$success = true;
+		$username = strtolower(trim($_POST['username']));
+		$password = $_POST['password'];
 
-		$query = "SELECT * FROM lit_user WHERE username = '$username'";
-		$data = @mysqli_query($connection, $query);
+		if (!preg_match('/^[A-Za-z0-9_]+$/', $username)) {
+			$success = false;
+			$_SESSION['error'] = " Username must be alpha-numeric or '_'";
+		}
 
-		$success = false;
-		if (@mysqli_num_rows($data) == 1) {
-			if (password_verify($password, $data['password'])) {
-				success = true;
+		$passwordhash = sha1($password);
+
+		if ($success) {
+			$query = "SELECT user_id, city_id FROM lit_user WHERE username = '$username' AND password = '$passwordhash'";
+			$result = $conn->query($query);
+			if ($result->num_rows == 0) {
+				$success = false;
+				$_SESSION['error'] = " Your username or password is incorrect";
 			}
+			else {
+				$data = $result->fetch_assoc();
+			}
+
 		}
 
 		if ($success) {
-			$_SESSION['userid'] = $username;
-			$_SESSION['college'] = $data['college'];
+			$_SESSION['userid'] = $data['user_id'];
+			$_SESSION['cityid'] = $data['city_id'];
 
-			header("Location ");		// Bring the user to the college 2Lit page
-		}
-		else {
-			$_SESSION['error'] = "Your username or password is incorrect".
+			header("Location: view.php?city=$_SESSION['cityid']&sort=1");		// Bring the user to the college 2Lit page
 		}
 	}
 
-	@mysqli_close($connection);
+	$conn->close();
 
 ?>
 
@@ -71,9 +75,8 @@
 				   <div class="form-group">
 				   <?php
 				  	if (isset($_SESSION['error'])) {
-				  		echo "<div class=\"form-group\">";
-				  		echo "<label for=\"error\" class=\"col-sm-4 control-label\"></label>";
-				  		echo "<div class=\"alert alert-danger col-md-4\" role=\"alert\">";
+				  		echo "<div class=\"form-group error-box\">";
+				  		echo "<div class=\"alert alert-danger\" role=\"alert\">";
 						echo "<span class=\"glyphicon glyphicon-exclamation-sign\" aria-hidden=\"true\"></span>";
 						echo "<span class=\"sr-only\">Error:</span>";
 						echo  $_SESSION['error'];
