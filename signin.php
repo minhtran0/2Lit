@@ -92,7 +92,7 @@
 				    <label for="password">Password</label>
 				    <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
 				  </div>
-				  <button type="submit" class="btn btn-default">Submit</button>
+				  <button type="submit" id="submit" name="submit" class="btn btn-default">Submit</button>
 				</form>							<!-- Registration form END-->
 				</div>
 				<div class="col-md-2"></div>

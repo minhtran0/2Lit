@@ -3,11 +3,39 @@
 	include_once "global.php";
 
 	if (!isset($_SESSION['userid'])) {
-		header("Location ");		// Bring user to homepage if they're not signed in
+		header("Location: index.php");		// Bring user to homepage if they're not signed in
 	}
 
 	if (isset($_POST['submit'])) {
-		
+		$success = true;
+		$title = trim($_POST['title']);
+		$date = $_POST['data'];
+		$location = $_POST['location'];
+		$start_time = $_POST['start_time'];
+		$end_time = $_POST['end_time'];
+		$description = $_POST['description'];
+		if (strlen($title) > 40) {
+			$success = false;
+			$_SESSION['titleError'] = " " . strlen($title) . "/40 characters";
+		}
+		if (strlen($location) > 40) {
+			$success = false;
+			$_SESSION['locationError'] = " " . strlen($location) . "/40 characters";
+		}
+		if (strlen($description) > 300) {
+			$success = false;
+			$_SESSION['descriptError'] = " " . strlen($description) . "/300 characters";
+		}
+
+		if ($success) {
+			$query = "INSERT INTO lit_post (title, user_id, description, datetime_posted, date_event, starttime_event, endtime_event, location, upvotes, downvotes, city_id) VALUES ";
+			if ($stmt = $conn->prepare($query." (?, '$_SESSION['userid']', ?, 'NOW()', '$date', '$start_time', '$end_time', ?, '1', '0', '$_SESSION['cityid']')")) {
+				$stmt->bind_param('sss', $title, $description, $location);
+				$stmt->execute();
+				$stmt->close();
+				header("Location: view.php?city=$_SESSION['cityid']&sort=hot");
+			}
+		}
 	}
 
 	$conn->close();
@@ -42,53 +70,76 @@
 				<div class="col-md-8">	
 
 
-				<form method="post">								<!-- Registration form start-->
+				<form method="post">								<!-- Submit form start-->
 				  <div class="form-group">
+				  <label for="title">Title</label>
+				    <input type="text" class="form-control" id="title" name="title" placeholder="Title" value="<?php if (isset($_POST['title'])) echo $_POST['title'];?>" required>
+				  </div>
 				  <?php
-				  	if (isset($_SESSION['error'])) {
-				  		echo "<div class=\"form-group\">";
-				  		echo "<label for=\"error\" class=\"col-sm-4 control-label\"></label>";
-				  		echo "<div class=\"alert alert-danger col-md-4\" role=\"alert\">";
+				  	if (isset($_SESSION['titleError'])) {
+				  		echo "<div class=\"form-group error-box\">";
+				  		echo "<div class=\"alert alert-danger\" role=\"alert\">";
 						echo "<span class=\"glyphicon glyphicon-exclamation-sign\" aria-hidden=\"true\"></span>";
 						echo "<span class=\"sr-only\">Error:</span>";
-						echo  $_SESSION['error'];
+						echo  $_SESSION['titleError'];
 						echo "</div>";
 						echo "</div>";
-						unset($_SESSION['error']);
+						unset($_SESSION['titleError']);
 				  	}
 				  ?>
-				  <label for="title">Title</label>
-				    <input type="text" class="form-control" id="title" name="title" placeholder="Title" required>
-				  </div>
 				  <div class="form-group">
 				    <label for="date_event">Date of event</label>
-				    <input type="date" class="form-control" id="date_event" name="date_event" placeholder="Date" required>
+				    <input type="date" class="form-control" id="date_event" name="date_event" placeholder="Date" value="<?php if (isset($_POST['date_event'])) echo $_POST['date_event'];?>" required>
 				  </div>
 				  <div class="form-group">
 				  <label for="title">Location of event</label>
-				    <input type="text" class="form-control" id="location" name="location" placeholder="123 Main St." required>
+				    <input type="text" class="form-control" id="location" name="location" placeholder="123 Main St." value="<?php if (isset($_POST['location'])) echo $_POST['location'];?>" required>
 				  </div>
+				  <?php
+				  	if (isset($_SESSION['locationError'])) {
+				  		echo "<div class=\"form-group error-box\">";
+				  		echo "<div class=\"alert alert-danger\" role=\"alert\">";
+						echo "<span class=\"glyphicon glyphicon-exclamation-sign\" aria-hidden=\"true\"></span>";
+						echo "<span class=\"sr-only\">Error:</span>";
+						echo  $_SESSION['locationError'];
+						echo "</div>";
+						echo "</div>";
+						unset($_SESSION['locationError']);
+				  	}
+				  ?>
 				  <div class="form-horizontal">
 					  <div class="col-sm-5">
 						  <div class="form-group">
 						    <label for="start_time">Time event starts</label>
-						    <input type="time" class="form-control" id="start_time" name="start_time" placeholder="" required>
+						    <input type="time" class="form-control" id="start_time" name="start_time" placeholder="" value="<?php if (isset($_POST['start_time'])) echo $_POST['start_time'];?>" required>
 						  </div>
 					  </div>
 					  <div class="col-sm-2"></div>
 					  <div class="col-sm-5">
 						  <div class="form-group">
 						    <label for="end_time">Time event ends</label>
-						    <input type="time" class="form-control" id="end_time" name="end_time" placeholder="" required>
+						    <input type="time" class="form-control" id="end_time" name="end_time" placeholder="" value="<?php if (isset($_POST['end_time'])) echo $_POST['end_time'];?>" required>
 						  </div>
 					  </div>
 				  </div>
 				  <div class="form-group">
 				    <label for="description">Description of event</label>
-				 	<textarea class="form-control" id="description" name="description" rows="7" required></textarea>
+				 	<textarea class="form-control" id="description" name="description" rows="7" value="<?php if (isset($_POST['description'])) echo $_POST['description'];?>" required></textarea>
 				  </div>
-				  <button type="submit" class="btn btn-default">Submit</button>
-				</form>							<!-- Registration form END-->
+				  <?
+				  	if (isset($_SESSION['descriptError'])) {
+				  		echo "<div class=\"form-group error-box\">";
+				  		echo "<div class=\"alert alert-danger\" role=\"alert\">";
+						echo "<span class=\"glyphicon glyphicon-exclamation-sign\" aria-hidden=\"true\"></span>";
+						echo "<span class=\"sr-only\">Error:</span>";
+						echo  $_SESSION['descriptError'];
+						echo "</div>";
+						echo "</div>";
+						unset($_SESSION['descriptError']);
+				  	}
+				  ?>
+				  <button type="submit" id="submit" name="submit" class="btn btn-default">Submit</button>
+				</form>							<!-- Submit form END-->
 				</div>
 				<div class="col-md-2"></div>
 

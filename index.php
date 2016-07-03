@@ -32,7 +32,7 @@
 				  </button>
 				  <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
 				    <li><a href="#">Newest</a></li>
-				    <li><a href="#">Upcoming events</a></li>
+				    <li><a href="#">Upcoming</a></li>
 				    <li><a href="#">Top</a></li>
 				  </ul>
 				</div>

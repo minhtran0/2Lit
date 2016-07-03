@@ -21,11 +21,15 @@
 		$success = false;
 		header("Location: index.php");
 	}
-	if (isset[$_GET['sort']] && preg_match('/^[1-9][0-9]*$/', $_GET['sort'])) {
+	if (isset[$_GET['sort']]) {
 		$sort = strtolower($_GET['sort']);
+		if ($sort == 'hot' || $sort == 'new' || $sort == 'top' || $sort == 'upcoming')
+			$sort = strtolower($_GET['sort']);
+		else
+			$sort = 'hot';
 	}
 	else
-		$sort = "hot";
+		$sort = 'hot';
 
 	// If user is logged in and is in the same city -- then they can post and vote
 	if (isset($_SESSION['userid']) && $_SESSION['cityid'] == $cityid) {
@@ -88,13 +92,25 @@
 				<span id="inline-sort">Sort by: </span>
 				<div class="dropdown">
 				  <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-				    Newest
+				    <?php
+				    	if ($success) {
+				    		if ($sort == 'hot')	
+				    			echo 'Hot';
+				    		else if ($sort == 'new')
+				    			echo 'Newest';
+				    		else if ($sort == 'top')
+				    			echo 'Top';
+				    		else if ($sort == 'upcoming')	
+				    			echo 'Upcoming';
+				    	}
+				    ?>
 				    <span class="caret"></span>
 				  </button>
 				  <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-				    <li><a href="#">Newest</a></li>
-				    <li><a href="#">Upcoming events</a></li>
-				    <li><a href="#">Top</a></li>
+				    <li><a href="<?php if($success) echo "view.php?city=".$cityid."&sort=new";?>">Newest</a></li>
+				    <li><a href="<?php if($success) echo "view.php?city=".$cityid."&sort=upcoming";?>">Upcoming</a></li>
+				    <li><a href="<?php if($success) echo "view.php?city=".$cityid."&sort=top";?>">Top</a></li>
+				    <li><a href="<?php if($success) echo "view.php?city=".$cityid."&sort=hot";?>">Hot</a></li>
 				  </ul>
 				</div>
 			</div>			<!-- End sort div -->
@@ -105,10 +121,10 @@
 
 				if ($success) {
 					$query = "SELECT * FROM lit_post WHERE city_id = '$cityid'";
-					if ($sort = 'newest') {
+					if ($sort = 'new') {
 						$query .= " ORDER BY datetime_posted DESC";
 					}
-					else if ($sort = 'upcoming event') {
+					else if ($sort = 'upcoming') {
 						$query .= " AND date_event >= CURDATE() AND endtime_event > CURTIME()";
 						$query .= " ORDER BY date_event ASC, starttime_event ASC";
 
