@@ -10,11 +10,8 @@
 	clear: both;
 	padding: 15px;
 }
-#sidebar-header {
-
-}
 #sidebar-id {
-	
+	text-align: center;
 }
 #registrationid {
 	padding: 35px;
@@ -30,9 +27,7 @@
 	margin-bottom: 30px;
 }
 .hover {
-	-webkit-box-shadow: -2px 1px 31px 2px rgba(217,91,67,1);
-	-moz-box-shadow: -2px 1px 31px 2px rgba(217,91,67,1);
-	box-shadow: -2px 1px 31px 2px rgba(217,91,67,1);
+	outline: 0.5px solid rgb(217,91,67);
 }
 .post-left {
 	padding: 5px;
@@ -74,4 +69,28 @@
 }
 .error-box {
 	text-align: center;
+}
+
+/* unvisited link */
+a:link .lit-heading {
+    color: rgb(217,91,67);
+    text-decoration: none;
+}
+
+/* visited link */
+a:visited .lit-heading {
+    color: rgb(217,91,67);
+    text-decoration: none;
+}
+
+/* mouse over link */
+a:hover .lit-heading {
+    color: red;
+    text-decoration: none;
+}
+
+/* selected link */
+a:active .lit-heading {
+   	color: rgb(217,91,67);
+    text-decoration: none;
 }

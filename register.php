@@ -3,7 +3,7 @@
 	include_once "global.php";
 
 	if (isset($_SESSION['userid']) && isset($_SESSION['cityid'])) {
-		header("Location: view.php?city=$_SESSION['cityid']&sort=1");	// Bring the user to the college/state 2Lit page
+		header("Location: view.php?city=".$_SESSION['cityid']."&sort=hot");
 	}
 
 	if (isset($_POST['submit'])) {	
@@ -107,7 +107,7 @@
 				$_SESSION['cityid'] = $data['city_id'];
 			}
 
-			header("Location: view.php?city=$_SESSION['cityid']&sort=1"); // Bring user to city index
+			header("Location: view.php?city=".$_SESSION['cityid']."&sort=hot");
 		}
 
 	}
@@ -132,7 +132,7 @@
 <body>
 	<div class="container">
 		<div class="row page-header">
-			<h1 id="heading">2Lit  <span class="glyphicon glyphicon-fire" aria-hidden="true"></span></h1>
+			<a href="index.php"><h1 class="lit-heading" id="heading">2Lit  <span class="glyphicon glyphicon-fire" aria-hidden="true"></span></h1></a>
 		</div>
 		<div class="col-md-8" id="contentid"> <!-- The main content column -->
 			

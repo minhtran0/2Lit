@@ -10,18 +10,18 @@
 		$cityid = $_GET['city'];
 	// Else default to user's city
 	else if (isset($_SESSION['userid'])) {
-		$query = "SELECT cityid FROM lit_user WHERE userid = '$_SESSION['userid']'";
+		$query = "SELECT city_id FROM lit_user WHERE user_id = '".$_SESSION['userid']."'";
 		$result = $conn->query($query);
 		$data = $result->fetch_assoc();
 		$cityid = $data['city_id'];
-		header("Location: view.php?city=$cityid&sort=1");
+		header("Location: view.php?city=".$cityid."&sort=hot");
 	}
 
-	if (!preg_match('/^[1-9][0-9]*$/', $cityid)) {
+	if (!is_numeric($cityid) || $cityid < 0 || $cityid != round($cityid, 0)) {
 		$success = false;
 		header("Location: index.php");
 	}
-	if (isset[$_GET['sort']]) {
+	if (isset($_GET['sort'])) {
 		$sort = strtolower($_GET['sort']);
 		if ($sort == 'hot' || $sort == 'new' || $sort == 'top' || $sort == 'upcoming')
 			$sort = strtolower($_GET['sort']);
@@ -76,14 +76,14 @@
 <body>
 	<div class="container">
 		<div class="row page-header">
-			<h1 id="heading">2Lit  <span class="glyphicon glyphicon-fire" aria-hidden="true"></span></h1>
+			<a href="index.php"><h1 class="lit-heading" id="heading">2Lit  <span class="glyphicon glyphicon-fire" aria-hidden="true"></span></h1></a>
 		</div>
 		<div class="col-md-8" id="contentid"> <!-- The main content column -->
 
 			<?php
 
 				if ($success) {
-					echo "<h2>" . $city . ", ". $state;
+					echo "<h2 class=\"subheading text-center\">" . $city . ", ". $state . "</h2>";
 				}
 
 			?>
@@ -101,14 +101,14 @@
 				    		else if ($sort == 'top')
 				    			echo 'Top';
 				    		else if ($sort == 'upcoming')	
-				    			echo 'Upcoming';
+				    			echo 'Upcoming events';
 				    	}
 				    ?>
 				    <span class="caret"></span>
 				  </button>
 				  <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
 				    <li><a href="<?php if($success) echo "view.php?city=".$cityid."&sort=new";?>">Newest</a></li>
-				    <li><a href="<?php if($success) echo "view.php?city=".$cityid."&sort=upcoming";?>">Upcoming</a></li>
+				    <li><a href="<?php if($success) echo "view.php?city=".$cityid."&sort=upcoming";?>">Upcoming events</a></li>
 				    <li><a href="<?php if($success) echo "view.php?city=".$cityid."&sort=top";?>">Top</a></li>
 				    <li><a href="<?php if($success) echo "view.php?city=".$cityid."&sort=hot";?>">Hot</a></li>
 				  </ul>
@@ -135,10 +135,10 @@
 					else if ($sort = 'hot') {
 						// TODO: Need to implement a 'hot' algorithm
 					}
-					$result = $conn->query($query);
-					while ($row = $result->fetch_assoc()) {
+					//$result = $conn->query($query);
+					//while ($row = $result->fetch_assoc()) {
 						// Print out each post
-					}
+					//}
 				}
 
 			?>
@@ -168,8 +168,8 @@
 						</div>
 					</div>
 					<div class="row interest button-toolbar">
-						<button type="button" class="btn btn-danger btn-lg"><span class="glyphicon glyphicon-fire" aria-hidden="true"></span>  I'm interested (+1)</button>
-						<button type="button" class="btn btn-default btn-lg"><span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span>  2Lame (-0)</button>
+						<button type="button" class="btn btn-default btn-lg upvote"><span class="glyphicon glyphicon-fire" aria-hidden="true"></span>  I'm interested (<span class="upvotes">1</span>)</button>
+						<button type="button" class="btn btn-default btn-lg downvote"><span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span>  2Lame (<span class="downvotes">0</span>)</button>
 					</div>
 				</div>
 				<!-- END POST-->

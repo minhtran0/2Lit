@@ -3,7 +3,7 @@
 	include_once "global.php";
 
 	if (isset($_SESSION['userid']) && isset($_SESSION['cityid'])) {
-		header("Location: view.php?city=$_SESSION['cityid']&sort=1");	// Bring the user to the college/state 2Lit page
+		header("Location: view.php?city=".$_SESSION['cityid']."&sort=hot");	
 	}
 
 	if (isset($_POST['submit'])) {
@@ -35,7 +35,7 @@
 			$_SESSION['userid'] = $data['user_id'];
 			$_SESSION['cityid'] = $data['city_id'];
 
-			header("Location: view.php?city=$_SESSION['cityid']&sort=1");		// Bring the user to the college 2Lit page
+			header("Location: view.php?city=".$_SESSION['cityid']."&sort=hot");
 		}
 	}
 
@@ -60,13 +60,13 @@
 <body>
 	<div class="container">
 		<div class="row page-header">
-			<h1 id="heading">2Lit  <span class="glyphicon glyphicon-fire" aria-hidden="true"></span></h1>
+			<a href="index.php"><h1 class="lit-heading" id="heading">2Lit  <span class="glyphicon glyphicon-fire" aria-hidden="true"></span></h1></a>
 		</div>
 		<div class="col-md-8" id="contentid"> <!-- The main content column -->
 
 			<h2 class="subheading">Sign in into your account</h2>
 
-			<div class="row well" id="contentid">
+			<div class="row well" id="registrationid">
 
 				<div class="col-md-2"></div>
 				<div class="col-md-8">	
@@ -86,7 +86,7 @@
 				  	}
 				  ?>
 				  <label for="">Username</label>
-				    <input type="text" class="form-control" id="username" name="username" placeholder="Username" required>
+				    <input type="text" class="form-control" id="username" name="username" placeholder="Username" value="<?php if (isset($_POST['username'])) echo $_POST['username'];?>" required>
 				  </div>
 				  <div class="form-group">
 				    <label for="password">Password</label>
@@ -94,6 +94,7 @@
 				  </div>
 				  <button type="submit" id="submit" name="submit" class="btn btn-default">Submit</button>
 				</form>							<!-- Registration form END-->
+				<a href="register.php">Don't have an account? Click here to register.</a>
 				</div>
 				<div class="col-md-2"></div>
 

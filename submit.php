@@ -3,37 +3,49 @@
 	include_once "global.php";
 
 	if (!isset($_SESSION['userid'])) {
-		header("Location: index.php");		// Bring user to homepage if they're not signed in
+		header("Location: signin.php");	
 	}
 
 	if (isset($_POST['submit'])) {
 		$success = true;
 		$title = trim($_POST['title']);
-		$date = $_POST['data'];
-		$location = $_POST['location'];
+		$date = $_POST['date_event'];
+		$location = trim($_POST['location']);
 		$start_time = $_POST['start_time'];
 		$end_time = $_POST['end_time'];
-		$description = $_POST['description'];
+		$description = trim($_POST['description']);
 		if (strlen($title) > 40) {
 			$success = false;
-			$_SESSION['titleError'] = " " . strlen($title) . "/40 characters";
+			$_SESSION['titleError'] = " You wrote " . strlen($title) . " characters. 40 characters maximum";
 		}
 		if (strlen($location) > 40) {
 			$success = false;
-			$_SESSION['locationError'] = " " . strlen($location) . "/40 characters";
+			$_SESSION['locationError'] = " You wrote " . strlen($location) . " characters. 40 characters maximum";
 		}
 		if (strlen($description) > 300) {
 			$success = false;
-			$_SESSION['descriptError'] = " " . strlen($description) . "/300 characters";
+			$_SESSION['descriptError'] = " You wrote " . strlen($description) . " characters. 300 characters maximum";
+		}
+		if ($start_time >= $end_time) {
+			$success = false;
+			$_SESSION['timeError'] = " End time must be after Start time";
+		}
+		$today_start = strtotime('today');
+		$today_end = strtotime('tomorrow');
+		$date_timestamp = strtotime($date);
+
+		if ($date_timestamp < $today_start) {
+		    $success = false;
+			$_SESSION['dateError'] = " Cannot be a past date";
 		}
 
 		if ($success) {
 			$query = "INSERT INTO lit_post (title, user_id, description, datetime_posted, date_event, starttime_event, endtime_event, location, upvotes, downvotes, city_id) VALUES ";
-			if ($stmt = $conn->prepare($query." (?, '$_SESSION['userid']', ?, 'NOW()', '$date', '$start_time', '$end_time', ?, '1', '0', '$_SESSION['cityid']')")) {
+			if ($stmt = $conn->prepare($query." (?, '".$_SESSION['userid']."', ?, NOW(), '$date', '$start_time', '$end_time', ?, '1', '0', '".$_SESSION['cityid']."')")) {
 				$stmt->bind_param('sss', $title, $description, $location);
 				$stmt->execute();
 				$stmt->close();
-				header("Location: view.php?city=$_SESSION['cityid']&sort=hot");
+				header("Location: view.php?city=".$_SESSION['cityid']."&sort=hot");
 			}
 		}
 	}
@@ -89,8 +101,20 @@
 				  ?>
 				  <div class="form-group">
 				    <label for="date_event">Date of event</label>
-				    <input type="date" class="form-control" id="date_event" name="date_event" placeholder="Date" value="<?php if (isset($_POST['date_event'])) echo $_POST['date_event'];?>" required>
+				    <input type="date" class="form-control" id="date_event" name="date_event" placeholder="Date" value="<?php if (isset($_POST['date_event'])) echo $_POST['date_event']; else echo date('Y-m-d');?>" required>
 				  </div>
+				  <?php
+				  	if (isset($_SESSION['dateError'])) {
+				  		echo "<div class=\"form-group error-box\">";
+				  		echo "<div class=\"alert alert-danger\" role=\"alert\">";
+						echo "<span class=\"glyphicon glyphicon-exclamation-sign\" aria-hidden=\"true\"></span>";
+						echo "<span class=\"sr-only\">Error:</span>";
+						echo  $_SESSION['dateError'];
+						echo "</div>";
+						echo "</div>";
+						unset($_SESSION['dateError']);
+				  	}
+				  ?>
 				  <div class="form-group">
 				  <label for="title">Location of event</label>
 				    <input type="text" class="form-control" id="location" name="location" placeholder="123 Main St." value="<?php if (isset($_POST['location'])) echo $_POST['location'];?>" required>
@@ -122,11 +146,23 @@
 						  </div>
 					  </div>
 				  </div>
+				  <?php
+				  	if (isset($_SESSION['timeError'])) {
+				  		echo "<div class=\"form-group error-box\">";
+				  		echo "<div class=\"alert alert-danger\" role=\"alert\">";
+						echo "<span class=\"glyphicon glyphicon-exclamation-sign\" aria-hidden=\"true\"></span>";
+						echo "<span class=\"sr-only\">Error:</span>";
+						echo  $_SESSION['timeError'];
+						echo "</div>";
+						echo "</div>";
+						unset($_SESSION['timeError']);
+				  	}
+				  ?>
 				  <div class="form-group">
 				    <label for="description">Description of event</label>
-				 	<textarea class="form-control" id="description" name="description" rows="7" value="<?php if (isset($_POST['description'])) echo $_POST['description'];?>" required></textarea>
+				 	<textarea class="form-control" id="description" name="description" rows="7" required><?php if (isset($_POST['description'])) echo $_POST['description'];?></textarea>
 				  </div>
-				  <?
+				  <?php
 				  	if (isset($_SESSION['descriptError'])) {
 				  		echo "<div class=\"form-group error-box\">";
 				  		echo "<div class=\"alert alert-danger\" role=\"alert\">";
