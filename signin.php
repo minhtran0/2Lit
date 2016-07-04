@@ -19,7 +19,7 @@
 		$passwordhash = sha1($password);
 
 		if ($success) {
-			$query = "SELECT user_id, city_id FROM lit_user WHERE username = '$username' AND password = '$passwordhash'";
+			$query = "SELECT user_id, city_id, username FROM lit_user WHERE username = '$username' AND password = '$passwordhash'";
 			$result = $conn->query($query);
 			if ($result->num_rows == 0) {
 				$success = false;
@@ -34,6 +34,7 @@
 		if ($success) {
 			$_SESSION['userid'] = $data['user_id'];
 			$_SESSION['cityid'] = $data['city_id'];
+			$_SESSION['username'] = $data['username'];
 
 			header("Location: view.php?city=".$_SESSION['cityid']."&sort=hot");
 		}
@@ -64,7 +65,7 @@
 		</div>
 		<div class="col-md-8" id="contentid"> <!-- The main content column -->
 
-			<h2 class="subheading">Sign in into your account</h2>
+			<h2 class="subheading">Sign into your account</h2>
 
 			<div class="row well" id="registrationid">
 
@@ -100,15 +101,6 @@
 
 			</div>
 		</div>								<!-- End main content column-->
-		<div class="col-md-4" id="sidebarid"> <!-- The sidebar -->
-			<div class="panel panel-default">
-				<div class="panel-heading" id="sidebar-header">Sidebar  <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span></div>
-				<div class="panel-body">
-					<p></p>
-					<br><br><br><br><br><br><br><br><br>
-				</div>
-			</div>
-		</div>								<!-- End sidebar-->
 	</div>
 
 	<!-- Latest compiled and minified JavaScript -->

@@ -2,6 +2,9 @@ $(document).ready(function() {
 	$('.post').hover(function() { 
 		$(this).toggleClass('hover'); 
 	});
+	$('.register').click(function() {
+		location.href = "register.php";
+	});
 	$('.upvote').bind('click', function(event) {
 		$(this).toggleClass('btn-danger');
 		if ($(this).hasClass('btn-danger')) {

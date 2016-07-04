@@ -90,7 +90,6 @@
 			$query = "INSERT INTO lit_user (username, password, email, city_id) VALUES ";
 			$query .= "('$username', '$passwordhash', '$email', '$city_id')";
 			$conn->query($query);
-			if (!data)	printf("Errormessage: %s\n", $conn->error);
 
 			unset($_POST['username']);
 			unset($_POST['password']);
@@ -98,13 +97,13 @@
 			unset($_POST['city']);
 			unset($_POST['state']);
 
-			$query = "SELECT user_id FROM lit_user WHERE user_id = '$user_id'";
+			$query = "SELECT user_id, username, city_id FROM lit_user WHERE username = '$username'";
 			$result = $conn->query($query);
 			$data = $result->fetch_assoc();
-			if (!data)	printf("Errormessage: %s\n", $conn->error);
-			if ($data->num_rows == 1) {
+			if ($result->num_rows == 1) {
 				$_SESSION['userid'] = $data['user_id'];
 				$_SESSION['cityid'] = $data['city_id'];
+				$_SESSION['username'] = $data['username'];
 			}
 
 			header("Location: view.php?city=".$_SESSION['cityid']."&sort=hot");
@@ -227,15 +226,6 @@
 				<div class="col-md-2"></div>
 			</div>
 		</div>								<!-- End main content column-->
-		<div class="col-md-4" id="sidebarid"> <!-- The sidebar -->
-			<div class="panel panel-default">
-				<div class="panel-heading" id="sidebar-header">Sidebar  <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span></div>
-				<div class="panel-body">
-					<p></p>
-					<br><br><br><br><br><br><br><br><br>
-				</div>
-			</div>
-		</div>								<!-- End sidebar-->
 	</div>
 
 	<!-- Latest compiled and minified JavaScript -->

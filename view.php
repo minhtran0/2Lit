@@ -2,6 +2,10 @@
 
 	include_once "global.php";
 
+	if (!isset($_SESSION['userid'])) {
+		header("Location: signin.php");	
+	}
+
 	$canPost = false;
 	$canVote = false;
 
@@ -74,19 +78,71 @@
 	</style>
 </head>
 <body>
-	<div class="container">
-		<div class="row page-header">
-			<a href="index.php"><h1 class="lit-heading" id="heading">2Lit  <span class="glyphicon glyphicon-fire" aria-hidden="true"></span></h1></a>
-		</div>
-		<div class="col-md-8" id="contentid"> <!-- The main content column -->
+ 	<!-- Fixed navbar -->
+    <nav class="navbar navbar-default navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand lit-heading" href=" <?php echo "view.php?city=".$_SESSION['cityid']."&sort=hot";?> ">2Lit  <span class="glyphicon glyphicon-fire" aria-hidden="true"></span></a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <?php
 
-			<?php
+          	if (isset($_SESSION['userid'])) {
+echo "          <ul class=\"nav navbar-nav\">\n";
+echo "            <li"; if ($sort == 'hot') echo " class=\"active\""; echo "><a href=\"view.php?city=".$cityid."&sort=hot\">Hot</a></li>\n";
+echo "            <li"; if ($sort == 'new') echo " class=\"active\""; echo "><a href=\"view.php?city=".$cityid."&sort=new\">New</a></li>\n";
+echo "            <li"; if ($sort == 'upcoming') echo " class=\"active\""; echo "><a href=\"view.php?city=".$cityid."&sort=upcoming\">Upcoming</a></li>\n";
+echo "            <li"; if ($sort == 'top') echo " class=\"active\""; echo "><a href=\"view.php?city=".$cityid."&sort=top\">Top</a></li>\n";
+echo "            <li><a><strong>"; echo $city.", ".$state; echo "</strong></a></li>\n";
+echo "          </ul>\n";
+echo "          <form class=\"navbar-form navbar-left\" role=\"search\">\n";
+echo "        <div class=\"form-group\">\n";
+echo "          <input type=\"text\" class=\"form-control\" placeholder=\"Take a peek at other cities\">\n";
+echo "        </div>\n";
+echo "        <button type=\"submit\" class=\"btn btn-default\">Search</button>\n";
+echo "      </form>";
 
-				if ($success) {
-					echo "<h2 class=\"subheading text-center\">" . $city . ", ". $state . "</h2>";
+			}
+
+		?>
+
+          <ul class="nav navbar-nav navbar-right">
+            <?php
+
+            	if (isset($_SESSION['userid'])) {
+echo "			<li><a href=\"submit.php\">Submit a post</a></li>\n";
+echo "            <li class=\"dropdown\">\n";
+echo "              <a href=\"#\" class=\"dropdown-toggle\" data-toggle=\"dropdown\" role=\"button\" aria-haspopup=\"true\" aria-expanded=\"false\">". $_SESSION['username'] ." <span class=\"caret\"></span></a>\n";
+echo "              <ul class=\"dropdown-menu\">\n";
+echo "                <li><a href=\"#\">Profile</a></li>\n";
+echo "                <li><a href=\"#\">Settings</a></li>\n";
+echo "                <li><a href=\"#\">Privacy Policy</a></li>\n";
+echo "                <li role=\"separator\" class=\"divider\"></li>\n";
+echo "                <li><a href=\"logout.php\">Sign out</a></li>\n";
+echo "              </ul>\n";
+echo "            </li>";
+				}
+				else {
+echo "			<li><a href=\"signin.php\">Sign in</a></li>\n";
 				}
 
 			?>
+
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div>
+    </nav>
+	<div class="container">
+
+	<br><br><br>
+
+		<div class="col-md-8" id="contentid"> <!-- The main content column -->
 
 			<div class="row" id="sort">		<!-- Begin sort div -->
 				<span id="inline-sort">Sort by: </span>
@@ -176,15 +232,6 @@
 
 			</div>
 		</div>								<!-- End main content column-->
-		<div class="col-md-4" id="sidebarid"> <!-- The sidebar -->
-			<div class="panel panel-default">
-				<div class="panel-heading" id="sidebar-header">Sidebar  <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span></div>
-				<div class="panel-body">
-					<p>Welcome to the sidebar of my website.</p>
-					<br><br><br><br><br><br><br><br><br>
-				</div>
-			</div>
-		</div>								<!-- End sidebar-->
 	</div>
 
 	<!-- Latest compiled and minified JavaScript -->

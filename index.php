@@ -1,4 +1,10 @@
-<!DOCTYPE html>
+<?php
+
+	include_once "global.php";
+
+?>
+
+
 <html>
 <head>
 	<title>2Lit</title>
@@ -13,31 +19,77 @@
 	</style>
 </head>
 <body>
+ 	<!-- Fixed navbar -->
+    <nav class="navbar navbar-default navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand lit-heading" href="index.php">2Lit  <span class="glyphicon glyphicon-fire" aria-hidden="true"></span></a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <?php
+
+          	if (isset($_SESSION['userid'])) {
+echo "          <ul class=\"nav navbar-nav\">\n";
+echo "            <li><a><strong>Global</strong></a></li>\n";
+echo "          </ul>\n";
+echo "          <form class=\"navbar-form navbar-left\" role=\"search\">\n";
+echo "        <div class=\"form-group\">\n";
+echo "          <input type=\"text\" class=\"form-control\" placeholder=\"Take a peek at other cities\">\n";
+echo "        </div>\n";
+echo "        <button type=\"submit\" class=\"btn btn-default\">Search</button>\n";
+echo "      </form>";
+			}
+
+		?>
+
+          <ul class="nav navbar-nav navbar-right">
+            <?php
+
+            	if (isset($_SESSION['userid'])) {
+echo "			<li><a href=\"submit.php\">Submit a post</a></li>\n";
+echo "            <li class=\"dropdown\">\n";
+echo "              <a href=\"#\" class=\"dropdown-toggle\" data-toggle=\"dropdown\" role=\"button\" aria-haspopup=\"true\" aria-expanded=\"false\">". $_SESSION['username'] ." <span class=\"caret\"></span></a>\n";
+echo "              <ul class=\"dropdown-menu\">\n";
+echo "                <li><a href=\"#\">Profile</a></li>\n";
+echo "                <li><a href=\"#\">Settings</a></li>\n";
+echo "                <li><a href=\"#\">Privacy Policy</a></li>\n";
+echo "                <li role=\"separator\" class=\"divider\"></li>\n";
+echo "                <li><a href=\"logout.php\">Sign out</a></li>\n";
+echo "              </ul>\n";
+echo "            </li>";
+				}
+				else {
+echo "			<li><a href=\"signin.php\">Sign in</a></li>\n";
+				}
+
+			?>
+
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div>
+    </nav>
 	<div class="container">
-		<div class="row page-header">
-			<a href="index.php"><h1 class="lit-heading" id="heading">2Lit  <span class="glyphicon glyphicon-fire" aria-hidden="true"></span></h1></a>
-		</div>
+
+	<br><br><br>
+
 		<div class="col-md-8" id="contentid"> <!-- The main content column -->
-			<div class="row jumbotron">
-				<h1>Wanna know what's cool in your area?</h1>
-				<p>Click below to sign up for an account! Look below to see some of the hottest events from around the world!</p>
-				<button type="button" class="btn btn-primary btn-lg">Sign me up!</button>
-			</div>
-			<div class="row" id="sort">		<!-- Begin sort div -->
-				<span id="inline-sort">Sort by: </span>
-				<div class="dropdown">
-				  <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-				    Hot
-				    <span class="caret"></span>
-				  </button>
-				  <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-				    <li><a href="#">Newest</a></li>
-				    <li><a href="#">Upcoming events</a></li>
-				    <li><a href="#">Top</a></li>
-				    <li><a href="#">Hot</a></li>
-				  </ul>
-				</div>
-			</div>			<!-- End sort div -->
+			<?php
+
+				if (!isset($_SESSION['userid'])) {
+echo "			<div class=\"row jumbotron\">\n";
+echo "				<h1>Wanna know what's cool in your area?</h1>\n";
+echo "				<p>Click below to sign up for an account! Look below to see some of the hottest events from around the world!</p>\n";
+echo "				<button type=\"button\" class=\"btn btn-primary btn-lg register\">Sign me up!</button>\n";
+echo "			</div>";
+				}
+
+			?>
 
 			<div class="row well" id="contentid">
 
@@ -77,14 +129,6 @@
 
 			</div>
 		</div>								<!-- End main content column-->
-		<div class="col-md-4" id="sidebarid"> <!-- The sidebar -->
-			<div class="panel panel-default">
-				<div class="panel-body">
-					<p></p>
-					<br><br><br><br><br><br><br><br><br>
-				</div>
-			</div>
-		</div>								<!-- End sidebar-->
 	</div>
 
 	<!-- Latest compiled and minified JavaScript -->

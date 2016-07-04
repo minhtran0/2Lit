@@ -6,6 +6,16 @@
 		header("Location: signin.php");	
 	}
 
+	$query = "SELECT city, state FROM lit_cities WHERE city_id = '".$_SESSION['cityid']."'";
+	$result = $conn->query($query);
+	if ($result->num_rows != 1)
+		$success = false;
+	else {
+		$data = $result->fetch_assoc();
+		$city = $data['city'];
+		$state = $data['state'];
+	}
+
 	if (isset($_POST['submit'])) {
 		$success = true;
 		$title = trim($_POST['title']);
@@ -68,13 +78,44 @@
 	</style>
 </head>
 <body>
+	<!-- Fixed navbar -->
+    <nav class="navbar navbar-default navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand lit-heading" href=" <?php echo "view.php?city=".$_SESSION['cityid']."&sort=hot";?> ">2Lit  <span class="glyphicon glyphicon-fire" aria-hidden="true"></span></a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav navbar-right">
+            <li class="active"><a href="submit.php">Submit a post</a></li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><?php if (isset($_SESSION['username'])) echo $_SESSION['username']; ?> <span class="caret"></span></a>
+              <ul class="dropdown-menu">
+                <li><a href="#">Profile</a></li>
+                <li><a href="#">Settings</a></li>
+                <li role="separator" class="divider"></li>
+                <li><a href="#">Privacy Policy</a></li>
+                <li><a href="#">Terms and Conditions</a></li>
+                <li role="separator" class="divider"></li>
+                <li><a href="logout.php">Sign out</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div>
+    </nav>
 	<div class="container">
-		<div class="row page-header">
-			<h1 id="heading">2Lit  <span class="glyphicon glyphicon-fire" aria-hidden="true"></span></h1>
-		</div>
+
+	<br><br><br>
+
 		<div class="col-md-8" id="contentid"> <!-- The main content column -->
 
-			<h2 class="subheading">Submit a post</h2>
+			<h2 class="subheading">Submit an post to <?php echo $city.", ".$state; ?> </h2>
 
 			<div class="row well" id="contentid">
 
@@ -181,15 +222,6 @@
 
 			</div>
 		</div>								<!-- End main content column-->
-		<div class="col-md-4" id="sidebarid"> <!-- The sidebar -->
-			<div class="panel panel-default">
-				<div class="panel-heading" id="sidebar-header">Sidebar  <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span></div>
-				<div class="panel-body">
-					<p></p>
-					<br><br><br><br><br><br><br><br><br>
-				</div>
-			</div>
-		</div>								<!-- End sidebar-->
 	</div>
 
 	<!-- Latest compiled and minified JavaScript -->
