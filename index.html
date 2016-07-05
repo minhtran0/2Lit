@@ -57,12 +57,23 @@
     </nav>
 	<div class="container">
 		<a href="index.php"><h1 class="lit-heading" id="heading">2Lit  <span class="glyphicon glyphicon-fire" aria-hidden="true"></span></h1></a>
-		<div class="col-md-8" id="contentid"> <!-- The main content column -->
-			<div class="row jumbotron">
-				<h1>Wanna know what's cool in your area?</h1>
-				<p>Click below to sign up for an account! Look below to see some of the hottest events from around the world!</p>
-				<button type="button" class="btn btn-primary btn-lg">Sign me up!</button>
+		<div class="row">
+			<div class="col-md-8">
+				<div class="row jumbotron">
+					<h1>Wanna know what's cool in your area?</h1>
+					<p>Click below to sign up for an account! Look below to see some of the hottest events from around the world!</p>
+					<button type="button" class="btn btn-primary btn-lg">Sign me up!</button>
+				</div>
 			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-8">
+				<img src="header.jpg" class="img-responsive">
+			</div>
+		</div>
+		<div class="row">
+		<div class="col-md-2"></div>
+		<div class="col-md-7" id="contentid"> <!-- The main content column -->
 			<div class="row" id="sort">		<!-- Begin sort div -->
 				<span id="inline-sort">Sort by: </span>
 				<div class="dropdown">
@@ -83,12 +94,13 @@
 
 				<!-- POST-->
 				<div class="row panel panel-default post">
+					<div class="row">
 					<div class="col-md-4">		<!-- Left side -->
 						<div class="row date left-post">
 							[date]
 						</div>
 						<div class="row time">
-							[time]
+							[start] - <br> [end]
 						</div>
 						<div class="row place">
 							@ [place]
@@ -105,9 +117,10 @@
 							posted by: [name]
 						</div>
 					</div>
+					</div>
 					<div class="row interest button-toolbar" post-id="123">
-						<button type="button" class="btn btn-default btn-lg upvote"><span class="glyphicon glyphicon-fire" aria-hidden="true"></span>  I'm interested (<span class="upvotes">1</span>)</button>
-						<button type="button" class="btn btn-default btn-lg downvote"><span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span>  2Lame (<span class="downvotes">0</span>)</button>
+						<button type="button" class="btn btn-default upvote"><span class="glyphicon glyphicon-fire" aria-hidden="true"></span>  I'm interested (<span class="upvotes">1</span>)</button>
+						<button type="button" class="btn btn-default downvote"><span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span>  2Lame (<span class="downvotes">0</span>)</button>
 					</div>
 				</div>
 				<!-- END POST-->
@@ -137,8 +150,8 @@
 						</div>
 					</div>
 					<div class="row interest button-toolbar">
-						<button type="button" class="btn btn-default btn-lg upvote"><span class="glyphicon glyphicon-fire" aria-hidden="true"></span>  I'm interested (<span class="upvotes">1</span>)</button>
-						<button type="button" class="btn btn-default btn-lg downvote"><span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span>  2Lame (<span class="downvotes">0</span>)</button>
+						<button type="button" class="btn btn-default upvote"><span class="glyphicon glyphicon-fire" aria-hidden="true"></span>  I'm interested (<span class="upvotes">1</span>)</button>
+						<button type="button" class="btn btn-default downvote"><span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span>  2Lame (<span class="downvotes">0</span>)</button>
 					</div>
 				</div>
 				<!-- END POST-->
@@ -169,17 +182,16 @@
 						</div>
 					</div>
 					<div class="row interest button-toolbar">
-						<button type="button" class="btn btn-default btn-lg upvote"><span class="glyphicon glyphicon-fire" aria-hidden="true"></span>  I'm interested (<span class="upvotes">1</span>)</button>
-						<button type="button" class="btn btn-default btn-lg downvote"><span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span>  2Lame (<span class="downvotes">0</span>)</button>
+						<button type="button" class="btn btn-default upvote"><span class="glyphicon glyphicon-fire" aria-hidden="true"></span>  I'm interested (<span class="upvotes">1</span>)</button>
+						<button type="button" class="btn btn-default downvote"><span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span>  2Lame (<span class="downvotes">0</span>)</button>
 					</div>
 				</div>
 				<!-- END POST-->
 
 			</div>
 		</div>								<!-- End main content column-->
-		<div class="col-md-4" id="sidebarid"> <!-- The sidebar -->
-			
-		</div>								<!-- End sidebar-->
+		</div>
+
 	</div>
 
 	<!-- Latest compiled and minified JavaScript -->

@@ -141,97 +141,124 @@ echo "			<li><a href=\"signin.php\">Sign in</a></li>\n";
 	<div class="container">
 
 	<br><br><br>
+		<div class="row">
+			<div class="col-md-8">
+				<img src="header.jpg" class="img-responsive">
+			</div>
+		</div>
 
-		<div class="col-md-8" id="contentid"> <!-- The main content column -->
-
-			<div class="row" id="sort">		<!-- Begin sort div -->
-				<span id="inline-sort">Sort by: </span>
-				<div class="dropdown">
-				  <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-				    <?php
-				    	if ($success) {
-				    		if ($sort == 'hot')	
-				    			echo 'Hot';
-				    		else if ($sort == 'new')
-				    			echo 'Newest';
-				    		else if ($sort == 'top')
-				    			echo 'Top';
-				    		else if ($sort == 'upcoming')	
-				    			echo 'Upcoming events';
-				    	}
-				    ?>
-				    <span class="caret"></span>
-				  </button>
-				  <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-				    <li><a href="<?php if($success) echo "view.php?city=".$cityid."&sort=new";?>">Newest</a></li>
-				    <li><a href="<?php if($success) echo "view.php?city=".$cityid."&sort=upcoming";?>">Upcoming events</a></li>
-				    <li><a href="<?php if($success) echo "view.php?city=".$cityid."&sort=top";?>">Top</a></li>
-				    <li><a href="<?php if($success) echo "view.php?city=".$cityid."&sort=hot";?>">Hot</a></li>
-				  </ul>
-				</div>
-			</div>			<!-- End sort div -->
+		<div class="row">
+		<div class="col-md-7" id="contentid"> <!-- The main content column -->
 
 			<div class="row well" id="contentid">
+
+			<!-- POST-->
 
 			<?php
 
 				if ($success) {
-					$query = "SELECT * FROM lit_post WHERE city_id = '$cityid'";
-					if ($sort = 'new') {
-						$query .= " ORDER BY datetime_posted DESC";
+					$col = "post_id,title,description,datetime_posted,date_event,starttime_event,endtime_event,location,upvotes,downvotes,user_id";
+					$query = "SELECT ".$col." FROM lit_post WHERE city_id = '$cityid'";
+					$query .= " AND date_event >= CURDATE()";
+					if ($sort == 'new') {
+						$query .= " ORDER BY datetime_posted DESC LIMIT 10";
 					}
-					else if ($sort = 'upcoming') {
-						$query .= " AND date_event >= CURDATE() AND endtime_event > CURTIME()";
-						$query .= " ORDER BY date_event ASC, starttime_event ASC";
+					else if ($sort == 'upcoming') {
+						$query .= " ORDER BY date_event ASC, starttime_event ASC LIMIT 10";
+					}
+					else if ($sort == 'top') {
+						$query .= " ORDER BY upvotes DESC, downvotes ASC LIMIT 10";
+					}
+					else if ($sort == 'hot') {
+						$query .= 
+							"ORDER BY 
+							    LOG10(ABS(upvotes - downvotes) + 1) * SIGN(upvotes - downvotes)
+							    + (UNIX_TIMESTAMP(datetime_posted) / 100000) DESC
+							LIMIT 1000";
+					}
+					$result = $conn->query($query);
+					while ($row = $result->fetch_assoc()) {
+						// Print out each post
+						$query = "SELECT username from lit_user WHERE user_id = '".$row['user_id']."'";
+						$result2 = $conn->query($query);
+						$data = $result2->fetch_assoc();
+						$username = $data['username'];
+						$upvotes = $row['upvotes'];
+						$downvotes = $row['downvotes'];
+
+echo "				<div class=\"row panel panel-default post\">\n";
+echo "					<div class=\"row\">";
+echo "					<div class=\"col-md-4\">		<!-- Left side -->\n";
+echo "						<div class=\"row date left-post\">\n";
+echo "							".date("m-d-Y", strtotime($row['date_event']))."\n";
+echo "						</div>\n";
+echo "						<div class=\"row time\">\n";
+echo "							".date('g:i a', strtotime($row['starttime_event']))."-\n<br>".date('g:i a', strtotime($row['endtime_event']));
+echo "						</div>\n";
+echo "						<div class=\"row place\">\n";
+echo "							@ ".$row['location']."\n";
+echo "						</div>\n";
+echo "					</div>\n";
+echo "					<div class=\"col-md-8 right-post\">		<!-- Right side -->\n";
+echo "						<div class=\"row title\">\n";
+echo "							".$row['title']."\n";
+echo "						</div>\n";
+echo "						<div class=\"row description\">\n";
+echo "							".$row['description']."\n";
+echo "						</div>\n";
+echo "						<div class=\"row host\">\n";
+echo "							posted ".time_elapsed_string($row['datetime_posted'])." by: <a href=\"#\">".$username."</a>\n";
+echo "						</div>\n";
+echo "						<div class=\"row host\">\n";
+echo "							<a href=\"#\">(0 comments)</a>\n";
+echo "						</div>";
+echo "					</div>\n";
+echo "					</div>";
+echo "					<div class=\"row interest button-toolbar\" post-id=\"123\">\n";
+echo "						<button type=\"button\" class=\"btn btn-default upvote\"><span class=\"glyphicon glyphicon-fire\" aria-hidden=\"true\"></span>  I'm interested (<span class=\"upvotes\">".$upvotes."</span>)</button>\n";
+echo "						<button type=\"button\" class=\"btn btn-default downvote\"><span class=\"glyphicon glyphicon-thumbs-down\" aria-hidden=\"true\"></span>  2Lame (<span class=\"downvotes\">".$downvotes."</span>)</button>\n";
+echo "					</div>\n";
+echo "				</div>";
 
 					}
-					else if ($sort = 'top') {
-						$query .= " ORDER BY upvotes DESC, downvotes ASC";
-					}
-					else if ($sort = 'hot') {
-						// TODO: Need to implement a 'hot' algorithm
-					}
-					//$result = $conn->query($query);
-					//while ($row = $result->fetch_assoc()) {
-						// Print out each post
-					//}
+				}
+
+				function time_elapsed_string($datetime, $full = false) {
+				    $now = new DateTime;
+				    $ago = new DateTime($datetime);
+				    $diff = $now->diff($ago);
+
+				    $diff->w = floor($diff->d / 7);
+				    $diff->d -= $diff->w * 7;
+
+				    $string = array(
+				        'y' => 'year',
+				        'm' => 'month',
+				        'w' => 'week',
+				        'd' => 'day',
+				        'h' => 'hr',
+				        'i' => 'min',
+				        's' => 'sec',
+				    );
+				    foreach ($string as $k => &$v) {
+				        if ($diff->$k) {
+				            $v = $diff->$k . ' ' . $v . ($diff->$k > 1 ? 's' : '');
+				        } else {
+				            unset($string[$k]);
+				        }
+				    }
+
+				    if (!$full) $string = array_slice($string, 0, 1);
+				    return $string ? implode(', ', $string) . ' ago' : 'just now';
 				}
 
 			?>
 
-				<!-- POST-->
-				<div class="row panel panel-default post">
-					<div class="col-md-4">		<!-- Left side -->
-						<div class="row date left-post">
-							[date]
-						</div>
-						<div class="row time">
-							[time]
-						</div>
-						<div class="row place">
-							@ [place]
-						</div>
-					</div>
-					<div class="col-md-8 right-post">		<!-- Right side -->
-						<div class="row title">
-							[title]
-						</div>
-						<div class="row description">
-							[description here]
-						</div>
-						<div class="row host">
-							posted by: [name]
-						</div>
-					</div>
-					<div class="row interest button-toolbar">
-						<button type="button" class="btn btn-default btn-lg upvote"><span class="glyphicon glyphicon-fire" aria-hidden="true"></span>  I'm interested (<span class="upvotes">1</span>)</button>
-						<button type="button" class="btn btn-default btn-lg downvote"><span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span>  2Lame (<span class="downvotes">0</span>)</button>
-					</div>
-				</div>
 				<!-- END POST-->
 
 			</div>
 		</div>								<!-- End main content column-->
+		</div>
 	</div>
 
 	<!-- Latest compiled and minified JavaScript -->

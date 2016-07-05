@@ -32,9 +32,9 @@
 			$success = false;
 			$_SESSION['locationError'] = " You wrote " . strlen($location) . " characters. 40 characters maximum";
 		}
-		if (strlen($description) > 300) {
+		if (strlen($description) > 1000) {
 			$success = false;
-			$_SESSION['descriptError'] = " You wrote " . strlen($description) . " characters. 300 characters maximum";
+			$_SESSION['descriptError'] = " You wrote " . strlen($description) . " characters. 1000 characters maximum";
 		}
 		if ($start_time >= $end_time) {
 			$success = false;

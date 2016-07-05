@@ -85,7 +85,7 @@
 		}
 
 		if ($success) {
-			$passwordhash = sha1($password);		// This has to be replaced. SHA1 is not a strong hash.
+			$passwordhash = password_hash($password, PASSWORD_DEFAULT);
 
 			$query = "INSERT INTO lit_user (username, password, email, city_id) VALUES ";
 			$query .= "('$username', '$passwordhash', '$email', '$city_id')";

@@ -16,10 +16,9 @@
 			$_SESSION['error'] = " Username must be alpha-numeric or '_'";
 		}
 
-		$passwordhash = sha1($password);
 
 		if ($success) {
-			$query = "SELECT user_id, city_id, username FROM lit_user WHERE username = '$username' AND password = '$passwordhash'";
+			$query = "SELECT user_id, city_id, username, password FROM lit_user WHERE username = '$username'";
 			$result = $conn->query($query);
 			if ($result->num_rows == 0) {
 				$success = false;
@@ -27,6 +26,10 @@
 			}
 			else {
 				$data = $result->fetch_assoc();
+				if (!password_verify($password, $data['password'])) {
+					$success = false;
+					$_SESSION['error'] = " Your username or password is incorrect";
+				}
 			}
 
 		}
