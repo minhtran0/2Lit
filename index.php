@@ -2,6 +2,19 @@
 
 	include_once "global.php";
 
+	if (isset($_SESSION['userid'])) {
+		if (isset($_GET['city']))
+			$cityid = $_GET['city'];
+		// Else default to user's city
+		else if (isset($_SESSION['userid'])) {
+			$query = "SELECT city_id FROM lit_user WHERE user_id = '".$_SESSION['userid']."'";
+			$result = $conn->query($query);
+			$data = $result->fetch_assoc();
+			$cityid = $data['city_id'];
+			header("Location: view.php?city=".$cityid."&sort=hot");
+		}
+	}
+
 ?>
 
 
@@ -74,65 +87,28 @@ echo "			<li><a href=\"signin.php\">Sign in</a></li>\n";
         </div><!--/.nav-collapse -->
       </div>
     </nav>
-	<div class="container">
 
-	<br><br><br>
-
-		<div class="col-md-8" id="contentid"> <!-- The main content column -->
-			<?php
-
-				if (!isset($_SESSION['userid'])) {
-echo "			<div class=\"row jumbotron\">\n";
-echo "				<h1>Wanna know what's cool in your area?</h1>\n";
-echo "				<p>Click below to sign up for an account! Look below to see some of the hottest events from around the world!</p>\n";
-echo "				<button type=\"button\" class=\"btn btn-primary btn-lg register\">Sign me up!</button>\n";
-echo "			</div>";
-				}
-
-			?>
-
-			<div class="row well" id="contentid">
-
-				<!-- POST-->
-				<div class="row panel panel-default post">
-					<div class="col-md-4">		<!-- Left side -->
-						<div class="row date left-post">
-							[date]
-						</div>
-						<div class="row time">
-							[time]
-						</div>
-						<div class="row place">
-							@ [place]
-						</div>
-					</div>
-					<div class="col-md-8 right-post">		<!-- Right side -->
-						<div class="row title">
-							[title]
-						</div>
-						<div class="row description">
-							[description here]
-						</div>
-						<div class="row host">
-							posted by: <a href="#">[name]</a>
-						</div>
-						<div class="row host">
-							<a href="#">(0 comments)</a>
-						</div>
-					</div>
-					<div class="row interest button-toolbar">
-						<button type="button" class="btn btn-default btn-lg upvote"><span class="glyphicon glyphicon-fire" aria-hidden="true"></span>  I'm interested (<span class="upvotes">1</span>)</button>
-						<button type="button" class="btn btn-default btn-lg downvote"><span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span>  2Lame (<span class="downvotes">0</span>)</button>
-					</div>
+    <div class="container-fluid">
+		<a href="index.php"><h1 class="lit-heading" id="heading">2Lit  <span class="glyphicon glyphicon-fire" aria-hidden="true"></span></h1></a>
+		<div class="row">
+		<div class="col-md-1"></div>
+			<div class="col-md-7">
+				<div class="row jumbotron">
+					<h1>Want to know what's cool in your area?</h1>
+					<p>2Lit quickly filters the hottest events in your city, town, or university.</p>
+					<button type="button" class="btn btn-primary btn-lg register">Sign me up!</button>
 				</div>
-				<!-- END POST-->
-
 			</div>
-		</div>								<!-- End main content column-->
+			<div class="col-md-4"></div>
+		</div>
 	</div>
 
 	<!-- Latest compiled and minified JavaScript -->
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
 	<script type="text/javascript" src="js/main.js"></script>
+	<script type="text/javascript">
+		var images = ['img-audience.jpg','img-munich.jpg'];
+		$('body').css({'background-image': 'url(' + images[Math.floor(Math.random() * images.length)] + ')'});
+	</script>
 </body>
 </html>

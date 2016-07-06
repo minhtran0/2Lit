@@ -54,9 +54,14 @@
 			if ($stmt = $conn->prepare($query." (?, '".$_SESSION['userid']."', ?, NOW(), '$date', '$start_time', '$end_time', ?, '1', '0', '".$_SESSION['cityid']."')")) {
 				$stmt->bind_param('sss', $title, $description, $location);
 				$stmt->execute();
+				$postid = $stmt->insert_id;
 				$stmt->close();
-				header("Location: view.php?city=".$_SESSION['cityid']."&sort=hot");
 			}
+
+			$query = "INSERT INTO lit_response (response, post_id, user_id) VALUES ('1', '$postid', '".$_SESSION['userid']."')";
+			$conn->query($query);
+
+			header("Location: view.php?city=".$_SESSION['cityid']."&sort=hot");
 		}
 	}
 

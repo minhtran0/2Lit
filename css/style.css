@@ -1,3 +1,9 @@
+body {
+	margin: 0;
+	background-size: 100%;
+	background-repeat:no-repeat;
+	display: compact;
+}
 #sort {
 	margin-bottom: 10px;
 }
@@ -37,9 +43,9 @@
 	padding-right: 15px;
 }
 .interest {
-	font-family: 'Overlock', 'sans-serif';
+	font-family: 'Chivo', 'sans-serif';
 	text-align: center;
-	font-size: 2em;
+	font-size: 1em;
 	padding-top: 15px;
 	padding-bottom: 10px;
 	margin-top: 5px;
@@ -47,12 +53,12 @@
 .title {
 	font-family: 'Overlock', 'sans-serif';
 	font-size: 2.3em;
-	border-bottom: 1px dotted #a9a9a9;
 	padding-bottom: 10px;
 	padding-top: 10px;
 	padding-right: 15px;
 	margin-right: 10px;
 	padding-left: 15px;
+	border-left: 4px dotted #a9a9a9;
 }
 .date, .time, .place {
 	font-family: 'Chivo', 'sans-serif';
@@ -65,14 +71,24 @@
 }
 .description, .host {
 	font-family: 'Overlock', 'sans-serif';
-	font-size: 1.3em;
+	font-size: 1.2em;
 	padding-top: 7px;
 	padding-bottom: 5px;
 	padding-right: 15px;
 	padding-left: 15px;
+	border-left: 4px dotted #a9a9a9;
+}
+.host {
+	font-family: 'Chivo', 'sans-serif';
+	font-size: 1em;
 }
 .error-box {
 	text-align: center;
+}
+.jumbotron {
+   background: rgba(11,72,107, 0.6); 
+   color: rgb(255, 255, 255);
+   font-family: 'Chivo', 'sans-serif';
 }
 
 /* unvisited link */
@@ -97,4 +113,4 @@ a:hover .lit-heading {
 a:active .lit-heading {
    	color: rgb(217,91,67);
     text-decoration: none;
-}
+}	

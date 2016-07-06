@@ -13,9 +13,9 @@
 			$success = false;
 			$_SESSION['usernameError'] = " Username must be alpha-numeric or '_'";
 		}
-		if (strlen($username) < 6 && strlen($username) > 20) {
+		if (strlen($username) < 3 || strlen($username) > 20) {
 			$success = false;
-			$_SESSION['usernameError'] = " Username must be 6-20 characters long";
+			$_SESSION['usernameError'] = " Username must be 3-20 characters long";
 		}
 		if ($success) {
 			$query = "SELECT username FROM lit_user WHERE username = '$username'";

@@ -23,7 +23,7 @@
 
 	if (!is_numeric($cityid) || $cityid < 0 || $cityid != round($cityid, 0)) {
 		$success = false;
-		header("Location: index.php");
+		header("Location: error.html");
 	}
 	if (isset($_GET['sort'])) {
 		$sort = strtolower($_GET['sort']);
@@ -138,14 +138,13 @@ echo "			<li><a href=\"signin.php\">Sign in</a></li>\n";
         </div><!--/.nav-collapse -->
       </div>
     </nav>
-	<div class="container">
-
-	<br><br><br>
+    <div class="container-fluid">
+    	<br><br><br>
 		<div class="row">
-			<div class="col-md-8">
-				<img src="header.jpg" class="img-responsive">
-			</div>
+			<img src="header.png" class="img-responsive">
 		</div>
+    </div>
+	<div class="container">
 
 		<div class="row">
 		<div class="col-md-7" id="contentid"> <!-- The main content column -->
@@ -173,7 +172,7 @@ echo "			<li><a href=\"signin.php\">Sign in</a></li>\n";
 						$query .= 
 							"ORDER BY 
 							    LOG10(ABS(upvotes - downvotes) + 1) * SIGN(upvotes - downvotes)
-							    + (UNIX_TIMESTAMP(datetime_posted) / 100000) DESC
+							    + (UNIX_TIMESTAMP(datetime_posted) / 70000) DESC
 							LIMIT 1000";
 					}
 					$result = $conn->query($query);
@@ -185,6 +184,22 @@ echo "			<li><a href=\"signin.php\">Sign in</a></li>\n";
 						$username = $data['username'];
 						$upvotes = $row['upvotes'];
 						$downvotes = $row['downvotes'];
+						$postid = $row['post_id'];
+
+						$query = "SELECT response FROM lit_response WHERE user_id = '".$_SESSION['userid']."' AND post_id = '$postid'";
+						$result3 = $conn->query($query);
+						if ($result3->num_rows == 0) {
+							$response = 0;
+						}
+						else {
+							$data2 = $result3->fetch_assoc();
+							if ($data2['response'] == "1")
+								$response = 1;
+							else if ($data2['response'] == "2")
+								$response = 2;
+							else
+								$response = 0;
+						}
 
 echo "				<div class=\"row panel panel-default post\">\n";
 echo "					<div class=\"row\">";
@@ -213,12 +228,12 @@ echo "						<div class=\"row host\">\n";
 echo "							<a href=\"#\">(0 comments)</a>\n";
 echo "						</div>";
 echo "					</div>\n";
-echo "					</div>";
-echo "					<div class=\"row interest button-toolbar\" post-id=\"123\">\n";
-echo "						<button type=\"button\" class=\"btn btn-default upvote\"><span class=\"glyphicon glyphicon-fire\" aria-hidden=\"true\"></span>  I'm interested (<span class=\"upvotes\">".$upvotes."</span>)</button>\n";
-echo "						<button type=\"button\" class=\"btn btn-default downvote\"><span class=\"glyphicon glyphicon-thumbs-down\" aria-hidden=\"true\"></span>  2Lame (<span class=\"downvotes\">".$downvotes."</span>)</button>\n";
 echo "					</div>\n";
-echo "				</div>";
+echo "					<div class=\"row interest button-toolbar\" post-id=\"$postid\">\n";
+echo "						<button type=\"button\" class=\"btn "; if ($response==1) echo "btn-danger"; else echo "btn-default"; echo " upvote\"><span class=\"glyphicon glyphicon-fire\" aria-hidden=\"true\"></span>  I'm interested (<span class=\"upvotes\">".$upvotes."</span>)</button>\n";
+echo "						<button type=\"button\" class=\"btn "; if ($response==2) echo "btn-primary"; else echo "btn-default"; echo " downvote\"><span class=\"glyphicon glyphicon-thumbs-down\" aria-hidden=\"true\"></span>  2Lame (<span class=\"downvotes\">".$downvotes."</span>)</button>\n";
+echo "					</div>\n";
+echo "				</div>\n\n";
 
 					}
 				}
