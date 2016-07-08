@@ -5,8 +5,8 @@
 	if (isset($_SESSION['userid'])) {
 		if(isset($_POST['commentid'])) {
 			$commentid = $_POST['commentid'];
-			$upvote = $_POST['upvote'];
-			$downvote = $_POST['downvote'];
+			$upvote = $_POST['cUpvote'];
+			$downvote = $_POST['cDownvote'];
 			$userid = $_SESSION['userid'];
 
 			$query = "SELECT upvotes, downvotes FROM lit_comment WHERE comment_id = '$commentid'";

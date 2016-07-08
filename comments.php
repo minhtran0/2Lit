@@ -2,14 +2,14 @@
 
 	include_once "global.php";
 
+	$success = true;
 	if (!isset($_SESSION['userid'])) {
+		$success = false;
 		header("Location: signin.php");	
 	}
 
 	$canPost = false;
 	$canVote = false;
-
-	$success = true;
 
 	if (isset($_GET['post']))
 		$postid = $_GET['post'];
@@ -37,6 +37,18 @@
 	if (isset($_SESSION['userid']) && $_SESSION['cityid'] == $cityid) {
 		$canPost = true;
 		$canVote = true;
+	}
+
+	if ($success) {
+		$query = "SELECT city, state FROM lit_cities WHERE city_id = '$cityid'";
+		$result = $conn->query($query);
+		if ($result->num_rows != 1)
+			$success = false;
+		else {
+			$data = $result->fetch_assoc();
+			$city = $data['city'];
+			$state = $data['state'];
+		}
 	}
 
 	if (!$success) {
@@ -73,6 +85,26 @@
           <a class="navbar-brand lit-heading" href=" <?php echo "view.php?city=".$_SESSION['cityid']."&sort=hot";?> ">2Lit  <span class="glyphicon glyphicon-fire" aria-hidden="true"></span></a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
+          <?php
+
+          	if (isset($_SESSION['userid'])) {
+echo "          <ul class=\"nav navbar-nav\">\n";
+echo "            <li"; if ($sort == 'hot') echo " class=\"active\""; echo "><a href=\"view.php?city=".$cityid."&sort=hot\">Hot</a></li>\n";
+echo "            <li"; if ($sort == 'new') echo " class=\"active\""; echo "><a href=\"view.php?city=".$cityid."&sort=new\">New</a></li>\n";
+echo "            <li"; if ($sort == 'upcoming') echo " class=\"active\""; echo "><a href=\"view.php?city=".$cityid."&sort=upcoming\">Upcoming</a></li>\n";
+echo "            <li"; if ($sort == 'top') echo " class=\"active\""; echo "><a href=\"view.php?city=".$cityid."&sort=top\">Top</a></li>\n";
+echo "            <li><a><strong>"; echo $city.", ".$state; echo "</strong></a></li>\n";
+echo "          </ul>\n";
+echo "          <form class=\"navbar-form navbar-left\" role=\"search\">\n";
+echo "        <div class=\"form-group\">\n";
+echo "          <input type=\"text\" class=\"form-control\" placeholder=\"Take a peek at other cities\">\n";
+echo "        </div>\n";
+echo "        <button type=\"submit\" class=\"btn btn-default\">Search</button>\n";
+echo "      </form>";
+
+			}
+
+		?>
 
           <ul class="nav navbar-nav navbar-right">
             <?php
@@ -102,9 +134,7 @@ echo "			<li><a href=\"signin.php\">Sign in</a></li>\n";
     </nav>
     <div class="container-fluid">
     	<br><br><br>
-		<div class="row">
-			<img src="header.png" class="img-responsive">
-		</div>
+		
     </div>
 	<div class="container">
 
@@ -135,6 +165,7 @@ echo "			<li><a href=\"signin.php\">Sign in</a></li>\n";
 						$downvotes = $row['downvotes'];
 						$postid = $row['post_id'];
 						$op_userid = $row['user_id'];
+						$num_comments = $row['comments'];
 
 						$query = "SELECT response FROM lit_response WHERE user_id = '".$_SESSION['userid']."' AND post_id = '$postid'";
 						$result3 = $conn->query($query);
@@ -177,7 +208,7 @@ echo "						<div class=\"row host\">\n";
 echo "							posted ".time_elapsed_string($row['datetime_posted'])." by: <a href=\"#\">".$username."</a> (+".$op_upvotes.", -".$op_downvotes.")\n";
 echo "						</div>\n";
 echo "						<div class=\"row host\">\n";
-echo "							<a href=\"#\">(0 comments)</a>\n";
+echo "							<a href=\"comments.php?post=$postid\">("; echo "$num_comments"; echo " comments)</a>\n";
 echo "						</div>";
 echo "					</div>\n";
 echo "					</div>\n";
@@ -189,13 +220,14 @@ echo "				</div>\n\n";
 
 					}
 
+					$_SESSION['postid'] = $_GET['post'];
+
 echo "				<!-- Send start -->\n"; 
-echo "				<div class=\"row panel panel-default comment-container send-style\">\n"; 
+echo "					<div class=\"row panel panel-default comment-container send-style\">\n"; 
 echo "					<div class=\"row\">\n"; 
 echo "					<form class=\"form-inline\" method=\"post\" action=\"commentsubmit.php\">\n"; 
 echo "					  <div class=\"form-group\">\n"; 
 echo "				    <textarea cols=\"50\" textmax=\"200\" class=\"form-control\" id=\"comment\" name=\"comment\" placeholder=\"What's on your mind?\">"; if (isset($_SESSION['comment'])) {echo $_SESSION['comment']; unset($_SESSION['comment']);} echo "</textarea>\n"; 
-echo "				  </div>\n";
 echo "					  </div>\n"; 
 echo "					  <button type=\"submit\" class=\"btn btn-default \" name=\"submit\">Send</button>\n"; 
 echo "					</form>\n"; 
@@ -211,9 +243,9 @@ echo "				<!-- Send end-->\n";
 					$result = $conn->query($query);
 
 					while ($row = $result->fetch_assoc()) {
-
-						$query2 = "SELECT response FROM lit_comment_response WHERE user_id = '".$_SESSION['userid']."' AND post_id = '$postid'";
-						$result2 = $conn->query($query);
+						$commentid = $row['comment_id'];
+						$query2 = "SELECT response FROM lit_comment_response WHERE user_id = '".$_SESSION['userid']."' AND comment_id = '$commentid'";
+						$result2 = $conn->query($query2);
 						if ($result2->num_rows == 0) {
 							$response = 0;
 						}
@@ -231,7 +263,6 @@ echo "				<!-- Send end-->\n";
 						$userid = $row['user_id'];
 						$comment = $row['comment'];
 						$datetime_comment = $row['datetime_comment'];
-						$commentid = $row['comment_id'];
 
 						$query3 = "SELECT username FROM lit_user WHERE user_id = '$userid'";
 						$result3 = $conn->query($query3);
