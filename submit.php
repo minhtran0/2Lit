@@ -58,9 +58,6 @@
 				$stmt->close();
 			}
 
-			$query = "INSERT INTO lit_response (response, post_id, user_id) VALUES ('1', '$postid', '".$_SESSION['userid']."')";
-			$conn->query($query);
-
 			header("Location: view.php?city=".$_SESSION['cityid']."&sort=hot");
 		}
 	}
@@ -206,7 +203,7 @@
 				  ?>
 				  <div class="form-group">
 				    <label for="description">Description of event</label>
-				 	<textarea class="form-control" id="description" name="description" rows="7" required><?php if (isset($_POST['description'])) echo $_POST['description'];?></textarea>
+				 	<textarea class="form-control" maxlength="1000" id="description" name="description" rows="7" required><?php if (isset($_POST['description'])) echo $_POST['description'];?></textarea>
 				  </div>
 				  <?php
 				  	if (isset($_SESSION['descriptError'])) {

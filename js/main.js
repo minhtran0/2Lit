@@ -58,4 +58,66 @@ $(document).ready(function() {
 			}
 		});
 	}
+	$('.cUpvote').click(function(event) {
+		$(this).toggleClass('green');
+		var commentid = $(this).closest('.left-comment-pane').attr('comment-id');
+
+		var cDownvotes = $(this).closest('.left-comment-pane').find('.cDownvote');
+		if (cDownvotes.hasClass('red')) {
+			cDownvotes.closest('.left-comment-pane').find('.score').html(parseInt(cDownvotes.closest('.left-comment-pane').find('.score').html()) + 1);
+			$(this).closest('.left-comment-pane').find('.cDownvote').removeClass('red');
+			ajaxCallComment(commentid, 0, -1);
+		}
+		if ($(this).hasClass('green')) {
+			$(this).closest('.left-comment-pane').find('.score').html(parseInt($(this).closest('.left-comment-pane').find('.score').html()) + 1);
+			ajaxCallComment(commentid, 1, 0);
+		}
+		else {
+			$(this).closest('.left-comment-pane').find('.score').html(parseInt($(this).closest('.left-comment-pane').find('.score').html()) - 1);
+			ajaxCallComment(commentid, -1, 0);
+		}
+	});
+	$('.cDownvote').click(function(event) {
+		$(this).toggleClass('red');
+		var commentid = $(this).closest('.left-comment-pane').attr('comment-id');
+
+		var cUpvotes = $(this).closest('.left-comment-pane').find('.cUpvote');
+		if (cUpvotes.hasClass('green')) {
+			cUpvotes.closest('.left-comment-pane').find('.score').html(parseInt(cUpvotes.closest('.left-comment-pane').find('.score').html()) - 1);
+			$(this).closest('.left-comment-pane').find('.cUpvote').removeClass('green');
+			ajaxCallComment(commentid, -1, 0);
+		}
+		if ($(this).hasClass('red')) {
+			$(this).closest('.left-comment-pane').find('.score').html(parseInt($(this).closest('.left-comment-pane').find('.score').html()) - 1);
+			ajaxCallComment(commentid, 0, 1);
+		}
+		else {
+			$(this).closest('.left-comment-pane').find('.score').html(parseInt($(this).closest('.left-comment-pane').find('.score').html()) + 1);
+			ajaxCallComment(commentid, 0, -1);
+		}
+	});
+	function ajaxCallComment(commentid, cUpvote, cDownvote) {
+		$.ajax({
+			url: 'cUpvote.php',
+			type: 'POST',
+			data: {'commentid': commentid,
+					'cUpvote': cUpvote,
+					'cDownvote': cDownvote},
+			success: function(result){
+             },
+			error: function(xhr, desc, err) {
+			    console.log(xhr);
+			    console.log("Details: " + desc + "\nError:" + err);
+			}
+		});
+	}
+	var text_max_comment = 200;
+    $('#comment-feedback').text(text_max_comment);
+
+    $('#comment').keyup(function() {
+        var text_length = $('#comment').val().length;
+        var text_remaining = text_max_comment - text_length;
+
+        $('#comment-feedback').text(text_remaining);
+    });
 });

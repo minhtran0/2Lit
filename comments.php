@@ -10,8 +10,9 @@
 	$canVote = false;
 
 	$success = true;
-	if (isset($_GET['city']))
-		$cityid = $_GET['city'];
+
+	if (isset($_GET['post']))
+		$postid = $_GET['post'];
 	// Else default to user's city
 	else if (isset($_SESSION['userid'])) {
 		$query = "SELECT city_id FROM lit_user WHERE user_id = '".$_SESSION['userid']."'";
@@ -20,41 +21,22 @@
 		$cityid = $data['city_id'];
 		header("Location: view.php?city=".$cityid."&sort=hot");
 	}
-
-	if (!is_numeric($cityid) || $cityid < 0 || $cityid != round($cityid, 0)) {
+	if (!is_numeric($postid) || $postid < 0 || $postid != round($postid, 0)) {
 		$success = false;
-		header("Location: error.html");
+		header("Location: index.php");
 	}
-	if (isset($_GET['sort'])) {
-		$sort = strtolower($_GET['sort']);
-		if ($sort == 'hot' || $sort == 'new' || $sort == 'top' || $sort == 'upcoming')
-			$sort = strtolower($_GET['sort']);
-		else
-			$sort = 'hot';
+
+	if ($success) {
+		$query = "SELECT city_id FROM lit_post WHERE post_id = '$postid'";
+		$result = $conn->query($query);
+		$data = $result->fetch_assoc();
+		$cityid = $data['city_id'];
 	}
-	else
-		$sort = 'hot';
 
 	// If user is logged in and is in the same city -- then they can post and vote
 	if (isset($_SESSION['userid']) && $_SESSION['cityid'] == $cityid) {
 		$canPost = true;
 		$canVote = true;
-	}
-	// If they are logged in, then they can vote only
-	else if (isset($_SESSION['userid'])) {
-		$canVote = true;
-	}
-
-	if ($success) {
-		$query = "SELECT city, state FROM lit_cities WHERE city_id = '$cityid'";
-		$result = $conn->query($query);
-		if ($result->num_rows != 1)
-			$success = false;
-		else {
-			$data = $result->fetch_assoc();
-			$city = $data['city'];
-			$state = $data['state'];
-		}
 	}
 
 	if (!$success) {
@@ -91,26 +73,6 @@
           <a class="navbar-brand lit-heading" href=" <?php echo "view.php?city=".$_SESSION['cityid']."&sort=hot";?> ">2Lit  <span class="glyphicon glyphicon-fire" aria-hidden="true"></span></a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
-          <?php
-
-          	if (isset($_SESSION['userid'])) {
-echo "          <ul class=\"nav navbar-nav\">\n";
-echo "            <li"; if ($sort == 'hot') echo " class=\"active\""; echo "><a href=\"view.php?city=".$cityid."&sort=hot\">Hot</a></li>\n";
-echo "            <li"; if ($sort == 'new') echo " class=\"active\""; echo "><a href=\"view.php?city=".$cityid."&sort=new\">New</a></li>\n";
-echo "            <li"; if ($sort == 'upcoming') echo " class=\"active\""; echo "><a href=\"view.php?city=".$cityid."&sort=upcoming\">Upcoming</a></li>\n";
-echo "            <li"; if ($sort == 'top') echo " class=\"active\""; echo "><a href=\"view.php?city=".$cityid."&sort=top\">Top</a></li>\n";
-echo "            <li><a><strong>"; echo $city.", ".$state; echo "</strong></a></li>\n";
-echo "          </ul>\n";
-echo "          <form class=\"navbar-form navbar-left\" role=\"search\">\n";
-echo "        <div class=\"form-group\">\n";
-echo "          <input type=\"text\" class=\"form-control\" placeholder=\"Take a peek at other cities\">\n";
-echo "        </div>\n";
-echo "        <button type=\"submit\" class=\"btn btn-default\">Search</button>\n";
-echo "      </form>";
-
-			}
-
-		?>
 
           <ul class="nav navbar-nav navbar-right">
             <?php
@@ -156,26 +118,11 @@ echo "			<li><a href=\"signin.php\">Sign in</a></li>\n";
 			<?php
 
 				if ($success) {
-					$col = "*";
-					$query = "SELECT ".$col." FROM lit_post WHERE city_id = '$cityid'";
-					$query .= " AND date_event >= CURDATE()";
-					if ($sort == 'new') {
-						$query .= " ORDER BY datetime_posted DESC LIMIT 10";
-					}
-					else if ($sort == 'upcoming') {
-						$query .= " ORDER BY date_event ASC, starttime_event ASC LIMIT 10";
-					}
-					else if ($sort == 'top') {
-						$query .= " ORDER BY upvotes DESC, downvotes ASC LIMIT 10";
-					}
-					else if ($sort == 'hot') {
-						$query .= 
-							"ORDER BY 
-							    LOG10(ABS(upvotes - downvotes) + 1) * SIGN(upvotes - downvotes)
-							    + (UNIX_TIMESTAMP(datetime_posted) / 70000) DESC
-							LIMIT 1000";
-					}
+					$query = "SELECT * FROM lit_post WHERE post_id = '$postid'";
 					$result = $conn->query($query);
+					$op_userid = "";
+
+					// There's only one row, but I'm too lazy to take the while loop out and reformat.
 					while ($row = $result->fetch_assoc()) {
 						// Print out each post
 						$query = "SELECT username, total_upvotes, total_downvotes from lit_user WHERE user_id = '".$row['user_id']."'";
@@ -187,7 +134,7 @@ echo "			<li><a href=\"signin.php\">Sign in</a></li>\n";
 						$upvotes = $row['upvotes'];
 						$downvotes = $row['downvotes'];
 						$postid = $row['post_id'];
-						$num_comments = $row['comments'];
+						$op_userid = $row['user_id'];
 
 						$query = "SELECT response FROM lit_response WHERE user_id = '".$_SESSION['userid']."' AND post_id = '$postid'";
 						$result3 = $conn->query($query);
@@ -230,7 +177,7 @@ echo "						<div class=\"row host\">\n";
 echo "							posted ".time_elapsed_string($row['datetime_posted'])." by: <a href=\"#\">".$username."</a> (+".$op_upvotes.", -".$op_downvotes.")\n";
 echo "						</div>\n";
 echo "						<div class=\"row host\">\n";
-echo "							<a href=\"comments.php?post=$postid\">("; echo "$num_comments"; echo " comments)</a>\n";
+echo "							<a href=\"#\">(0 comments)</a>\n";
 echo "						</div>";
 echo "					</div>\n";
 echo "					</div>\n";
@@ -240,6 +187,71 @@ echo "						<button type=\"button\" class=\"btn "; if ($response==2) echo "btn-p
 echo "					</div>\n";
 echo "				</div>\n\n";
 
+					}
+
+echo "				<!-- Send start -->\n"; 
+echo "				<div class=\"row panel panel-default comment-container send-style\">\n"; 
+echo "					<div class=\"row\">\n"; 
+echo "					<form class=\"form-inline\" method=\"post\" action=\"commentsubmit.php\">\n"; 
+echo "					  <div class=\"form-group\">\n"; 
+echo "				    <textarea cols=\"50\" textmax=\"200\" class=\"form-control\" id=\"comment\" name=\"comment\" placeholder=\"What's on your mind?\">"; if (isset($_SESSION['comment'])) {echo $_SESSION['comment']; unset($_SESSION['comment']);} echo "</textarea>\n"; 
+echo "				  </div>\n";
+echo "					  </div>\n"; 
+echo "					  <button type=\"submit\" class=\"btn btn-default \" name=\"submit\">Send</button>\n"; 
+echo "					</form>\n"; 
+echo "					</div>\n"; 
+echo "					<div class=\"row\">\n"; 
+echo "						<div class=\"col-md-8 col-xs-8 col-sm-8\"></div>\n"; 
+echo "						<div id=\"comment-feedback\"></div>\n"; 
+echo "					</div>\n"; 
+echo "					</div>\n";
+echo "				<!-- Send end-->\n"; 
+
+					$query = "SELECT * FROM lit_comment WHERE post_id = '$postid' ORDER BY comment_id ASC";
+					$result = $conn->query($query);
+
+					while ($row = $result->fetch_assoc()) {
+
+						$query2 = "SELECT response FROM lit_comment_response WHERE user_id = '".$_SESSION['userid']."' AND post_id = '$postid'";
+						$result2 = $conn->query($query);
+						if ($result2->num_rows == 0) {
+							$response = 0;
+						}
+						else {
+							$data2 = $result2->fetch_assoc();
+							if ($data2['response'] == "1")
+								$response = 1;
+							else if ($data2['response'] == "2")
+								$response = 2;
+							else
+								$response = 0;
+						}
+
+						$votes = intval($row['upvotes']) - intval($row['downvotes']);
+						$userid = $row['user_id'];
+						$comment = $row['comment'];
+						$datetime_comment = $row['datetime_comment'];
+						$commentid = $row['comment_id'];
+
+						$query3 = "SELECT username FROM lit_user WHERE user_id = '$userid'";
+						$result3 = $conn->query($query3);
+						$data3 = $result3->fetch_assoc();
+						$username = $data3['username'];
+
+echo "\n"; 
+echo "				<div class=\"row panel panel-default comment-container\">\n"; 
+echo "					<div class=\"col-md-1 left-comment-pane\" comment-id=\"$commentid\">		<!-- Left pane -->\n"; 
+echo "						<div class=\"row\"><span class=\"glyphicon glyphicon-chevron-up cUpvote"; if ($response==1) echo " green"; echo "\" aria-hidden=\"true\"></span></div>\n"; 
+echo "						<div class=\"row\"><span class=\"score\">"; echo "$votes"; echo "</span></div>\n"; 
+echo "						<div class=\"row\"><span class=\"glyphicon glyphicon-chevron-down cDownvote"; if ($response==2) echo " red"; echo "\" aria-hidden=\"true\"></span></div>\n"; 
+echo "					</div>\n"; 
+echo "					<div class=\"col-md-10 right-comment-pane\">		<!-- Right pane -->\n"; 
+echo "						<div class=\"row comment-name\"><strong>"; if ($op_userid==$userid) echo "<mark>$username - OP</mark>"; else echo "$username"; echo "</strong></div>\n"; 
+echo "						<div class=\"row comment\">"; echo "$comment"; echo "</div>\n"; 
+echo "						<div class=\"row comment-time\">"; echo time_elapsed_string($datetime_comment); echo "</div>\n"; 
+echo "					</div>\n"; 
+echo "				</div>\n"; 
+echo "\n"; 
 					}
 				}
 
@@ -274,7 +286,7 @@ echo "				</div>\n\n";
 
 			?>
 
-				<!-- END POST-->
+				<!-- END COMMENTS-->
 
 			</div>
 		</div>								<!-- End main content column-->
