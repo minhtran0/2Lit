@@ -9,8 +9,37 @@ $(document).ready(function() {
 	        loading = false; // reset value of loading once content loaded
 	    }
 	});
+	var clicked = false;
+	$('.noti').click(function() {
+		$.ajax({
+			url: 'notifications_navbar.php',
+			dataType: "json",
+			success: function(result){
+				if (!clicked) {
+					var count = 0;
+					$.each(result, function(idx, li){
+				      $('.notification-list').append(li.append);
+				      count++;
+				    });
+				    if (count == 0) {
+				    	$('.notification-list').append("<li class=\"no-notifications\">No Recent Activity</li>\n"); 
+				    }
+					$('.notification-list').append("<li role=\"separator\" class=\"divider\"></li>\n"); 
+					$('.notification-list').append("<li><a href=\"notifications.php\" class=\"seeAll\">See all</a></li>\n"); 
+					clicked = true;
+				}
+             },
+			error: function(xhr, desc, err) {
+			    console.log(xhr);
+			    console.log("Details: " + desc + "\nError:" + err);
+			}
+		});
+	});
 	$('.post').hover(function() { 
 		$(this).toggleClass('hover'); 
+	});
+	$('.notification-container').hover(function() { 
+		$(this).toggleClass('notificationhover'); 
 	});
 	$('.register').click(function() {
 		location.href = "register.php";

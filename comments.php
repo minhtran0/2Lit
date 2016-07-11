@@ -60,80 +60,88 @@
 
 <html>
 <head>
-	<title>2Lit</title>
+	<title>too lit</title>
 	<!-- Latest compiled and minified CSS -->
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
 	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.1.1/normalize.min.css"></link>
 	<link rel="stylesheet" href="css/style.css"></link>
-	<link href='http://fonts.googleapis.com/css?family=Overlock' rel='stylesheet' type='text/css'>
 	<link href='http://fonts.googleapis.com/css?family=Chivo' rel='stylesheet' type='text/css'>
-	<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro' rel='stylesheet' type='text/css'>
 	<link href='http://fonts.googleapis.com/css?family=Raleway' rel='stylesheet' type='text/css'>
 		
 	</style>
 </head>
 <body>
  	<!-- Fixed navbar -->
-    <nav class="navbar navbar-default navbar-fixed-top">
-      <div class="container">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand lit-heading" href=" <?php echo "view.php?city=".$_SESSION['cityid']."&sort=hot";?> ">too lit  <span class="glyphicon glyphicon-fire" aria-hidden="true"></span></a>
-        </div>
-        <div id="navbar" class="navbar-collapse collapse">
-          <?php
+	    <nav class="navbar navbar-default navbar-fixed-top navbar-font">
+	      <div class="container">
+	        <div class="navbar-header">
+	          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+	            <span class="sr-only">Toggle navigation</span>
+	            <span class="icon-bar"></span>
+	            <span class="icon-bar"></span>
+	            <span class="icon-bar"></span>
+	          </button>
+	          <a class="navbar-brand lit-heading" href=" <?php echo "view.php?city=".$_SESSION['cityid']."&sort=hot";?> ">too lit  <span class="glyphicon glyphicon-fire" aria-hidden="true"></span></a>
+	        </div>
+	        <div id="navbar" class="navbar-collapse collapse">
+	          <?php
 
-          	if (isset($_SESSION['userid'])) {
-echo "          <ul class=\"nav navbar-nav\">\n";
-echo "            <li"; if ($sort == 'hot') echo " class=\"active\""; echo "><a href=\"view.php?city=".$cityid."&sort=hot\">Hot</a></li>\n";
-echo "            <li"; if ($sort == 'new') echo " class=\"active\""; echo "><a href=\"view.php?city=".$cityid."&sort=new\">New</a></li>\n";
-echo "            <li"; if ($sort == 'upcoming') echo " class=\"active\""; echo "><a href=\"view.php?city=".$cityid."&sort=upcoming\">Upcoming</a></li>\n";
-echo "            <li"; if ($sort == 'top') echo " class=\"active\""; echo "><a href=\"view.php?city=".$cityid."&sort=top\">Top</a></li>\n";
-echo "            <li><a><strong>"; echo $city.", ".$state; echo "</strong></a></li>\n";
-echo "          </ul>\n";
-echo "          <form class=\"navbar-form navbar-left\" role=\"search\">\n";
-echo "        <div class=\"form-group\">\n";
-echo "          <input type=\"text\" class=\"form-control\" placeholder=\"Take a peek at other cities\">\n";
-echo "        </div>\n";
-echo "        <button type=\"submit\" class=\"btn btn-default\">Search</button>\n";
-echo "      </form>";
+	          	if (isset($_SESSION['userid'])) {
+	echo "          <ul class=\"nav navbar-nav\">\n";
+	echo "            <li"; if ($sort == 'hot') echo " class=\"active\""; echo "><a href=\"view.php?city=".$cityid."&sort=hot\">Hot</a></li>\n";
+	echo "            <li"; if ($sort == 'new') echo " class=\"active\""; echo "><a href=\"view.php?city=".$cityid."&sort=new\">New</a></li>\n";
+	echo "            <li"; if ($sort == 'upcoming') echo " class=\"active\""; echo "><a href=\"view.php?city=".$cityid."&sort=upcoming\">Upcoming</a></li>\n";
+	echo "            <li"; if ($sort == 'top') echo " class=\"active\""; echo "><a href=\"view.php?city=".$cityid."&sort=top\">Top</a></li>\n";
+	echo "            <li><a><strong>"; echo $city.", ".$state; echo "</strong></a></li>\n";
+	echo "          </ul>\n";
+	echo "          <form class=\"navbar-form navbar-left\" role=\"search\">\n";
+	echo "        <div class=\"form-group\">\n";
+	echo "          <input type=\"text\" class=\"form-control\" placeholder=\"Take a peek at other cities\">\n";
+	echo "        </div>\n";
+	echo "        <button type=\"submit\" class=\"btn btn-default\">Search</button>\n";
+	echo "      </form>";
 
-			}
-
-		?>
-
-          <ul class="nav navbar-nav navbar-right">
-            <?php
-
-            	if (isset($_SESSION['userid'])) {
-echo "			<li><a href=\"submit.php\">Submit a post</a></li>\n";
-echo "            <li class=\"dropdown\">\n";
-echo "              <a href=\"#\" class=\"dropdown-toggle\" data-toggle=\"dropdown\" role=\"button\" aria-haspopup=\"true\" aria-expanded=\"false\">". $_SESSION['username'] ." <span class=\"caret\"></span></a>\n";
-echo "              <ul class=\"dropdown-menu\">\n";
-echo "                <li><a href=\"#\">Profile</a></li>\n";
-echo "                <li><a href=\"#\">Settings</a></li>\n";
-echo "                <li><a href=\"#\">Privacy Policy</a></li>\n";
-echo "                <li role=\"separator\" class=\"divider\"></li>\n";
-echo "                <li><a href=\"logout.php\">Sign out</a></li>\n";
-echo "              </ul>\n";
-echo "            </li>";
-				}
-				else {
-echo "			<li><a href=\"signin.php\">Sign in</a></li>\n";
 				}
 
 			?>
 
-          </ul>
-        </div><!--/.nav-collapse -->
-      </div>
-    </nav>
+	          <ul class="nav navbar-nav navbar-right">
+	            <?php
+
+	            	if (isset($_SESSION['userid'])) {
+	            		$query = "SELECT num_notifications FROM lit_user WHERE user_id = '".$_SESSION['userid']."'";
+	            		$result = $conn->query($query);
+	            		$data = $result->fetch_assoc();
+	            		$num = $data['num_notifications'];
+	echo "			<li><a href=\"submit.php\">Submit a post</a></li>\n";
+	echo "			<li class=\"dropdown\">\n"; 
+	echo "              <a class=\"dropdown-toggle noti\" data-toggle=\"dropdown\" role=\"button\" aria-haspopup=\"true\" aria-expanded=\"false\"><span class=\"glyphicon glyphicon-bell\"></span>"; if ($num>0) echo "<span class=\"badge notification\">".$num."</span>"; echo "<span class=\"caret\"></span></a>\n"; 
+	echo "              <ul class=\"dropdown-menu notification-list\">\n"; 
+	echo "					<li class=\"dropdown-header\">Notifications</li>";
+	echo "              </ul>\n"; 
+	echo "            </li>\n";
+	echo "            <li class=\"dropdown\">\n";
+	echo "              <a href=\"#\" class=\"dropdown-toggle\" data-toggle=\"dropdown\" role=\"button\" aria-haspopup=\"true\" aria-expanded=\"false\">". $_SESSION['username'] ." <span class=\"caret\"></span></a>\n";
+	echo "              <ul class=\"dropdown-menu\">\n";
+	echo "                <li><a href=\"#\">Profile</a></li>\n";
+	echo "                <li><a href=\"#\">Settings</a></li>\n";
+	echo "                <li><a href=\"#\">Privacy Policy</a></li>\n";
+	echo "                <li role=\"separator\" class=\"divider\"></li>\n";
+	echo "                <li><a href=\"logout.php\">Sign out</a></li>\n";
+	echo "              </ul>\n";
+	echo "            </li>";
+					}
+					else {
+	echo "			<li><a href=\"signin.php\">Sign in</a></li>\n";
+					}
+
+				?>
+
+	          </ul>
+	        </div><!--/.nav-collapse -->
+	      </div>
+	    </nav>
     <div class="container-fluid">
     	<br><br><br>
 		

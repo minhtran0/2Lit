@@ -142,8 +142,7 @@ body {
 	padding-left: 20px;
 	color: #a9a9a9;
 }
-.noti {
-	background-color: #69D2E7;
+.navbar-font {
 	font-family: 'Chivo', sans-serif;
 	font-size: 1em;
 }
@@ -179,6 +178,9 @@ body {
 }
 .notificationhover {
 	background-color: #EDF4F5;
+}
+.notification {
+	background-color: #D95B43;
 }
 .lit-heading {
 	font-family: 'Chivo',sans-serif;

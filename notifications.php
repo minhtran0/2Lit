@@ -7,20 +7,18 @@
 		$success = false;
 		header("Location: signin.php");
 	}
-
 	if ($success) {
-		$userid = $_SESSION['userid'];
-		$query = "SELECT
-					*
-				FROM 
-					lit_notification
-				WHERE
-					user_id = '$userid'
-				ORDER BY
-					datetime_posted DESC";
-		$result = $conn->query($query);
-		$cityid = $_SESSION['cityid'];
-	}
+			$query = "SELECT city, state FROM lit_cities WHERE city_id = '$cityid'";
+			$result = $conn->query($query);
+			if ($result->num_rows != 1)
+				$success = false;
+			else {
+				$data = $result->fetch_assoc();
+				$city = $data['city'];
+				$state = $data['state'];
+			}
+			$cityid = $_SESSION['cityid'];
+		}
 
 ?>
 
@@ -32,7 +30,6 @@
 	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.1.1/normalize.min.css"></link>
 	<link rel="stylesheet" href="css/style.css"></link>
-	<link href='http://fonts.googleapis.com/css?family=Overlock' rel='stylesheet' type='text/css'>
 	<link href='http://fonts.googleapis.com/css?family=Chivo' rel='stylesheet' type='text/css'>
 	<link href='http://fonts.googleapis.com/css?family=Raleway' rel='stylesheet' type='text/css'>
 		
@@ -40,7 +37,7 @@
 </head>
 <body>
  	<!-- Fixed navbar -->
-	    <nav class="navbar navbar-default navbar-fixed-top">
+	    <nav class="navbar navbar-default navbar-fixed-top navbar-font">
 	      <div class="container">
 	        <div class="navbar-header">
 	          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
@@ -77,19 +74,15 @@
 	            <?php
 
 	            	if (isset($_SESSION['userid'])) {
+	            		$query = "SELECT num_notifications FROM lit_user WHERE user_id = '".$_SESSION['userid']."'";
+	            		$result = $conn->query($query);
+	            		$data = $result->fetch_assoc();
+	            		$num = $data['num_notifications'];
 	echo "			<li><a href=\"submit.php\">Submit a post</a></li>\n";
-	echo "<li class=\"dropdown noti\">\n"; 
-	echo "              <a class=\"dropdown-toggle\" data-toggle=\"dropdown\" role=\"button\" aria-haspopup=\"true\" aria-expanded=\"false\"><span class=\"glyphicon glyphicon-bell\"></span> <span class=\"badge notification\">7</span><span class=\"caret\"></span></a>\n"; 
-	echo "              <ul class=\"dropdown-menu\">\n"; 
-	echo "              	<li class=\"dropdown-header\">Notifications</li>\n"; 
-	echo "                <li><a href=\"#\" class=\"cName\"><strong>Profile</strong> has <strong>commented</strong> on the post<br> <span class=\"cPost\">\"Oncor Mayor's race on \"</span></a></li>\n"; 
-	echo "                <li><a href=\"#\" class=\"cName\"><strong>Profile</strong> has <strong>commented</strong> on the post<br> <span class=\"cPost\">\"Oncor Mayor's race on \"</span></a></li>\n"; 
-	echo "                <li><a href=\"#\" class=\"cName\"><strong>Profile</strong> has <strong>commented</strong> on the post<br> <span class=\"cPost\">\"Oncor Mayor's race on \"</span></a></li>\n"; 
-	echo "                <li><a href=\"#\" class=\"cName\"><strong>Profile</strong> has <strong>commented</strong> on the post<br> <span class=\"cPost\">\"Oncor Mayor's race on \"</span></a></li>\n"; 
-	echo "                <li><a href=\"#\" class=\"cName\"><strong>Profile</strong> has <strong>commented</strong> on the post<br> <span class=\"cPost\">\"Oncor Mayor's race on \"</span></a></li>\n"; 
-	echo "                <li class=\"no-notifications\">No Recent Activity</li>\n"; 
-	echo "                <li role=\"separator\" class=\"divider\"></li>\n"; 
-	echo "                <li><a href=\"#\" class=\"seeAll\">See all</a></li>\n"; 
+	echo "			<li class=\"dropdown\">\n"; 
+	echo "              <a class=\"dropdown-toggle noti\" data-toggle=\"dropdown\" role=\"button\" aria-haspopup=\"true\" aria-expanded=\"false\"><span class=\"glyphicon glyphicon-bell\"></span>"; if ($num>0) echo "<span class=\"badge notification\">".$num."</span>"; echo "<span class=\"caret\"></span></a>\n"; 
+	echo "              <ul class=\"dropdown-menu notification-list\">\n"; 
+	echo "					<li class=\"dropdown-header\">Notifications</li>";
 	echo "              </ul>\n"; 
 	echo "            </li>\n";
 	echo "            <li class=\"dropdown\">\n";
@@ -125,9 +118,19 @@
 				
 <?php
 		if ($success) {
+			$userid = $_SESSION['userid'];
+			$query = "SELECT
+						*
+					FROM 
+						lit_notification
+					WHERE
+						user_id = '$userid'
+					ORDER BY
+						datetime_posted DESC";
+			$result = $conn->query($query);
 			while ($row = $result->fetch_assoc()) {
-				if ($row['commenter_id'] >= 0) {
-					$query2 = "SELECT username FROM lit_user WHERE user_id = '".$row['commenter_id']."'";
+				if ($row['commenter_user_id'] >= 0) {
+					$query2 = "SELECT username FROM lit_user WHERE user_id = '".$row['commenter_user_id']."'";
 					$result2 = $conn->query($query2);
 					$data2 = $result2->fetch_assoc();
 					$commenter_name = $data2['username'];
@@ -135,10 +138,10 @@
 					$result3 = $conn->query($query3);
 					$data3 = $result3->fetch_assoc();
 					$title = $data3['title'];
-					
+
 echo "				<div class=\"row panel panel-default notification-container\">\n"; 
 echo "					<div class=\"col-md-12 col-sm-12 col-xs-12 notification-box\">\n"; 
-echo "						<div class=\"row comment\"><a href=\""; echo "comments.php?post=".$row['post_id']; echo "\" class=\"cName\"><strong>"; echo $commenter_name; echo "</strong> has <strong>commented</strong> on the post <span class=\"cPost\">\""; echo $title; echo "\"</span></a></div>\n"; 
+echo "						<div class=\"row comment\"><a href=\""; echo "comments.php?post=".$row['post_id']; echo "\" class=\"cName\"><strong>"."$commenter_name"; echo "</strong> has <strong>commented</strong> on the post <span class=\"cPost\">\""; echo $title; echo "\"</span></a></div>\n"; 
 echo "						<div class=\"row comment-time\">".time_elapsed_string($row['datetime_posted'])."</div>\n"; 
 echo "					</div>\n"; 
 echo "		 		</div>\n";
@@ -150,7 +153,7 @@ echo "		 		</div>\n";
 					$title = $data3['title'];
 echo "				<div class=\"row panel panel-default notification-container\">\n"; 
 echo "					<div class=\"col-md-12 col-sm-12 col-xs-12 notification-box\">\n"; 
-echo "						<div class=\"row comment\"><a href=\""; echo "comments.php?post=".$row['post_id']; echo "\" class=\"cName\">You have <strong>"; echo abs($row['commenter_id'])." upvotes" echo "</strong> on the post <span class=\"cPost\">\""; echo $title; echo "\"</span></a></div>\n"; 
+echo "						<div class=\"row comment\"><a href=\""; echo "comments.php?post=".$row['post_id']; echo "\" class=\"cName\">You have <strong>"; echo (abs($row['commenter_user_id'])*10)." upvotes</strong> on the post <span class=\"cPost\">\""; echo $title; echo "\"</span></a></div>\n"; 
 echo "						<div class=\"row comment-time\">".time_elapsed_string($row['datetime_posted'])."</div>\n"; 
 echo "					</div>\n"; 
 echo "		 		</div>\n";

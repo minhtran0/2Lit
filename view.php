@@ -66,21 +66,21 @@
 
 	<html>
 	<head>
-		<title>2Lit</title>
-		<!-- Latest compiled and minified CSS -->
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
-		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.1.1/normalize.min.css"></link>
-		<link rel="stylesheet" href="css/style.css"></link>
-		<link href='http://fonts.googleapis.com/css?family=Chivo' rel='stylesheet' type='text/css'>
-		<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro' rel='stylesheet' type='text/css'>
-		<link href='http://fonts.googleapis.com/css?family=Raleway' rel='stylesheet' type='text/css'>
-			
-		</style>
-	</head>
-	<body>
-	 	<!-- Fixed navbar -->
-	    <nav class="navbar navbar-default navbar-fixed-top">
+		<title>too lit</title>
+	<!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.1.1/normalize.min.css"></link>
+	<link rel="stylesheet" href="css/style.css"></link>
+	<link href='http://fonts.googleapis.com/css?family=Chivo' rel='stylesheet' type='text/css'>
+	<link href='http://fonts.googleapis.com/css?family=Raleway' rel='stylesheet' type='text/css'>
+	<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro' rel='stylesheet' type='text/css'>
+		
+	</style>
+</head>
+<body>
+ 	<!-- Fixed navbar -->
+	    <nav class="navbar navbar-default navbar-fixed-top navbar-font">
 	      <div class="container">
 	        <div class="navbar-header">
 	          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
@@ -117,7 +117,17 @@
 	            <?php
 
 	            	if (isset($_SESSION['userid'])) {
+	            		$query = "SELECT num_notifications FROM lit_user WHERE user_id = '".$_SESSION['userid']."'";
+	            		$result = $conn->query($query);
+	            		$data = $result->fetch_assoc();
+	            		$num = $data['num_notifications'];
 	echo "			<li><a href=\"submit.php\">Submit a post</a></li>\n";
+	echo "			<li class=\"dropdown\">\n"; 
+	echo "              <a class=\"dropdown-toggle noti\" data-toggle=\"dropdown\" role=\"button\" aria-haspopup=\"true\" aria-expanded=\"false\"><span class=\"glyphicon glyphicon-bell\"></span>"; if ($num>0) echo "<span class=\"badge notification\">".$num."</span>"; echo "<span class=\"caret\"></span></a>\n"; 
+	echo "              <ul class=\"dropdown-menu notification-list\">\n"; 
+	echo "					<li class=\"dropdown-header\">Notifications</li>";
+	echo "              </ul>\n"; 
+	echo "            </li>\n";
 	echo "            <li class=\"dropdown\">\n";
 	echo "              <a href=\"#\" class=\"dropdown-toggle\" data-toggle=\"dropdown\" role=\"button\" aria-haspopup=\"true\" aria-expanded=\"false\">". $_SESSION['username'] ." <span class=\"caret\"></span></a>\n";
 	echo "              <ul class=\"dropdown-menu\">\n";
