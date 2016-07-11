@@ -68,6 +68,8 @@
 	<link rel="stylesheet" href="css/style.css"></link>
 	<link href='http://fonts.googleapis.com/css?family=Overlock' rel='stylesheet' type='text/css'>
 	<link href='http://fonts.googleapis.com/css?family=Chivo' rel='stylesheet' type='text/css'>
+	<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro' rel='stylesheet' type='text/css'>
+	<link href='http://fonts.googleapis.com/css?family=Raleway' rel='stylesheet' type='text/css'>
 		
 	</style>
 </head>
@@ -82,7 +84,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand lit-heading" href=" <?php echo "view.php?city=".$_SESSION['cityid']."&sort=hot";?> ">2Lit  <span class="glyphicon glyphicon-fire" aria-hidden="true"></span></a>
+          <a class="navbar-brand lit-heading" href=" <?php echo "view.php?city=".$_SESSION['cityid']."&sort=hot";?> ">too lit  <span class="glyphicon glyphicon-fire" aria-hidden="true"></span></a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <?php
@@ -208,7 +210,7 @@ echo "						<div class=\"row host\">\n";
 echo "							posted ".time_elapsed_string($row['datetime_posted'])." by: <a href=\"#\">".$username."</a> (+".$op_upvotes.", -".$op_downvotes.")\n";
 echo "						</div>\n";
 echo "						<div class=\"row host\">\n";
-echo "							<a href=\"comments.php?post=$postid\">("; echo "$num_comments"; echo " comments)</a>\n";
+echo "							<a href=\"comments.php?post=$postid\">("; echo "$num_comments"; echo " comment"; echo ($num_comments==1?"":"s"); echo ")</a>\n";
 echo "						</div>";
 echo "					</div>\n";
 echo "					</div>\n";

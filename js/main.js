@@ -1,4 +1,14 @@
 $(document).ready(function() {
+	var loading = false;
+	$(window).scroll(function() {
+	    if (!loading && ($(window).scrollTop() >  $(document).height() - $(window).height() - 100)) {
+	        loading= true;
+
+	        // your content loading call goes here.
+
+	        loading = false; // reset value of loading once content loaded
+	    }
+	});
 	$('.post').hover(function() { 
 		$(this).toggleClass('hover'); 
 	});

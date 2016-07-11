@@ -20,7 +20,7 @@
 
 <html>
 <head>
-	<title>2Lit</title>
+	<title>too lit</title>
 	<!-- Latest compiled and minified CSS -->
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
 	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
@@ -28,6 +28,9 @@
 	<link rel="stylesheet" href="css/style.css"></link>
 	<link href='http://fonts.googleapis.com/css?family=Overlock' rel='stylesheet' type='text/css'>
 	<link href='http://fonts.googleapis.com/css?family=Chivo' rel='stylesheet' type='text/css'>
+	<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro' rel='stylesheet' type='text/css'>
+	<link href='http://fonts.googleapis.com/css?family=Raleway' rel='stylesheet' type='text/css'>
+
 		
 	</style>
 </head>
@@ -42,7 +45,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand lit-heading" href="index.php">2Lit  <span class="glyphicon glyphicon-fire" aria-hidden="true"></span></a>
+          <a class="navbar-brand lit-heading" href="index.php">too lit  <span class="glyphicon glyphicon-fire" aria-hidden="true"></span></a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <?php
@@ -95,7 +98,7 @@ echo "			<li><a href=\"signin.php\">Sign in</a></li>\n";
 			<div class="col-md-7">
 				<div class="row jumbotron">
 					<h1>Want to know what's cool in your area?</h1>
-					<p>2Lit quickly filters the hottest events in your city, town, or university.</p>
+					<p>2lit quickly filters the hottest events in your city, town, or university.</p>
 					<button type="button" class="btn btn-primary btn-lg register">Sign me up!</button>
 				</div>
 			</div>

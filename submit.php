@@ -28,9 +28,9 @@
 			$success = false;
 			$_SESSION['titleError'] = " You wrote " . strlen($title) . " characters. 40 characters maximum";
 		}
-		if (strlen($location) > 40) {
+		if (strlen($location) > 80) {
 			$success = false;
-			$_SESSION['locationError'] = " You wrote " . strlen($location) . " characters. 40 characters maximum";
+			$_SESSION['locationError'] = " You wrote " . strlen($location) . " characters. 80 characters maximum";
 		}
 		if (strlen($description) > 1000) {
 			$success = false;
@@ -57,6 +57,7 @@
 				$postid = $stmt->insert_id;
 				$stmt->close();
 			}
+			$cityid = $_SESSION['cityid'];
 
 			header("Location: view.php?city=".$_SESSION['cityid']."&sort=hot");
 		}
@@ -68,7 +69,7 @@
 
 <html>
 <head>
-	<title>2Lit</title>
+	<title>too lit</title>
 	<!-- Latest compiled and minified CSS -->
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
 	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
@@ -76,6 +77,8 @@
 	<link rel="stylesheet" href="css/style.css"></link>
 	<link href='http://fonts.googleapis.com/css?family=Overlock' rel='stylesheet' type='text/css'>
 	<link href='http://fonts.googleapis.com/css?family=Chivo' rel='stylesheet' type='text/css'>
+	<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro' rel='stylesheet' type='text/css'>
+	<link href='http://fonts.googleapis.com/css?family=Raleway' rel='stylesheet' type='text/css'>
 		
 	</style>
 </head>
@@ -90,23 +93,52 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand lit-heading" href=" <?php echo "view.php?city=".$_SESSION['cityid']."&sort=hot";?> ">2Lit  <span class="glyphicon glyphicon-fire" aria-hidden="true"></span></a>
+          <a class="navbar-brand lit-heading" href=" <?php echo "view.php?city=".$_SESSION['cityid']."&sort=hot";?> ">too lit  <span class="glyphicon glyphicon-fire" aria-hidden="true"></span></a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
+          <?php
+
+          	if (isset($_SESSION['userid'])) {
+echo "          <ul class=\"nav navbar-nav\">\n";
+echo "            <li"; if ($sort == 'hot') echo " class=\"active\""; echo "><a href=\"view.php?city=".$cityid."&sort=hot\">Hot</a></li>\n";
+echo "            <li"; if ($sort == 'new') echo " class=\"active\""; echo "><a href=\"view.php?city=".$cityid."&sort=new\">New</a></li>\n";
+echo "            <li"; if ($sort == 'upcoming') echo " class=\"active\""; echo "><a href=\"view.php?city=".$cityid."&sort=upcoming\">Upcoming</a></li>\n";
+echo "            <li"; if ($sort == 'top') echo " class=\"active\""; echo "><a href=\"view.php?city=".$cityid."&sort=top\">Top</a></li>\n";
+echo "            <li><a><strong>"; echo $city.", ".$state; echo "</strong></a></li>\n";
+echo "          </ul>\n";
+echo "          <form class=\"navbar-form navbar-left\" role=\"search\">\n";
+echo "        <div class=\"form-group\">\n";
+echo "          <input type=\"text\" class=\"form-control\" placeholder=\"Take a peek at other cities\">\n";
+echo "        </div>\n";
+echo "        <button type=\"submit\" class=\"btn btn-default\">Search</button>\n";
+echo "      </form>";
+
+			}
+
+		?>
+
           <ul class="nav navbar-nav navbar-right">
-            <li class="active"><a href="submit.php">Submit a post</a></li>
-            <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><?php if (isset($_SESSION['username'])) echo $_SESSION['username']; ?> <span class="caret"></span></a>
-              <ul class="dropdown-menu">
-                <li><a href="#">Profile</a></li>
-                <li><a href="#">Settings</a></li>
-                <li role="separator" class="divider"></li>
-                <li><a href="#">Privacy Policy</a></li>
-                <li><a href="#">Terms and Conditions</a></li>
-                <li role="separator" class="divider"></li>
-                <li><a href="logout.php">Sign out</a></li>
-              </ul>
-            </li>
+            <?php
+
+            	if (isset($_SESSION['userid'])) {
+echo "			<li><a href=\"submit.php\">Submit a post</a></li>\n";
+echo "            <li class=\"dropdown\">\n";
+echo "              <a href=\"#\" class=\"dropdown-toggle\" data-toggle=\"dropdown\" role=\"button\" aria-haspopup=\"true\" aria-expanded=\"false\">". $_SESSION['username'] ." <span class=\"caret\"></span></a>\n";
+echo "              <ul class=\"dropdown-menu\">\n";
+echo "                <li><a href=\"#\">Profile</a></li>\n";
+echo "                <li><a href=\"#\">Settings</a></li>\n";
+echo "                <li><a href=\"#\">Privacy Policy</a></li>\n";
+echo "                <li role=\"separator\" class=\"divider\"></li>\n";
+echo "                <li><a href=\"logout.php\">Sign out</a></li>\n";
+echo "              </ul>\n";
+echo "            </li>";
+				}
+				else {
+echo "			<li><a href=\"signin.php\">Sign in</a></li>\n";
+				}
+
+			?>
+
           </ul>
         </div><!--/.nav-collapse -->
       </div>
@@ -117,7 +149,7 @@
 
 		<div class="col-md-8" id="contentid"> <!-- The main content column -->
 
-			<h2 class="subheading">Submit an post to <?php echo $city.", ".$state; ?> </h2>
+			<h2 class="subheading">Submit a post to <?php echo $city.", ".$state; ?> </h2>
 
 			<div class="row well" id="contentid">
 

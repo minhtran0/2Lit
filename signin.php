@@ -58,13 +58,15 @@
 	<link rel="stylesheet" href="css/style.css"></link>
 	<link href='http://fonts.googleapis.com/css?family=Overlock' rel='stylesheet' type='text/css'>
 	<link href='http://fonts.googleapis.com/css?family=Chivo' rel='stylesheet' type='text/css'>
+	<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro' rel='stylesheet' type='text/css'>
+	<link href='http://fonts.googleapis.com/css?family=Raleway' rel='stylesheet' type='text/css'>
 		
 	</style>
 </head>
 <body>
 	<div class="container">
 		<div class="row page-header">
-			<a href="index.php"><h1 class="lit-heading" id="heading">2Lit  <span class="glyphicon glyphicon-fire" aria-hidden="true"></span></h1></a>
+			<a href="index.php"><h1 class="lit-heading" id="heading">too lit  <span class="glyphicon glyphicon-fire" aria-hidden="true"></span></h1></a>
 		</div>
 		<div class="col-md-8" id="contentid"> <!-- The main content column -->
 
