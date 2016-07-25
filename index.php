@@ -26,10 +26,10 @@
 	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.1.1/normalize.min.css"></link>
 	<link rel="stylesheet" href="css/style.css"></link>
-	<link href='http://fonts.googleapis.com/css?family=Overlock' rel='stylesheet' type='text/css'>
-	<link href='http://fonts.googleapis.com/css?family=Chivo' rel='stylesheet' type='text/css'>
+	<link href='//fonts.googleapis.com/css?family=Overlock' rel='stylesheet' type='text/css'>
+	<link href='//fonts.googleapis.com/css?family=Chivo' rel='stylesheet' type='text/css'>
 	<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro' rel='stylesheet' type='text/css'>
-	<link href='http://fonts.googleapis.com/css?family=Raleway' rel='stylesheet' type='text/css'>
+	<link href='//fonts.googleapis.com/css?family=Raleway' rel='stylesheet' type='text/css'>
 
 		
 	</style>
@@ -94,8 +94,8 @@ echo "			<li><a href=\"signin.php\">Sign in</a></li>\n";
     <div class="container-fluid">
 		<a href="index.php"><h1 class="lit-heading" id="heading">2Lit  <span class="glyphicon glyphicon-fire" aria-hidden="true"></span></h1></a>
 		<div class="row">
-		<div class="col-md-1"></div>
-			<div class="col-md-7">
+		<div class="col-md-1 col-sm-1 col-xs-1"></div>
+			<div class="col-md-7 col-sm-7 col-xs-7">
 				<div class="row jumbotron">
 					<h1>Want to know what's cool in your area?</h1>
 					<p>2lit quickly filters the hottest events in your city, town, or university.</p>
@@ -110,7 +110,7 @@ echo "			<li><a href=\"signin.php\">Sign in</a></li>\n";
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
 	<script type="text/javascript" src="js/main.js"></script>
 	<script type="text/javascript">
-		var images = ['img-audience.jpg','img-munich.jpg'];
+		var images = ['files/img-audience.jpg','files/img-munich.jpg'];
 		$('body').css({'background-image': 'url(' + images[Math.floor(Math.random() * images.length)] + ')'});
 	</script>
 </body>

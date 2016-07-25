@@ -1,6 +1,7 @@
 <?php
 
 	include_once "global.php";
+	include_once "lib/password.php";
 
 	if (isset($_SESSION['userid']) && isset($_SESSION['cityid'])) {
 		header("Location: view.php?city=".$_SESSION['cityid']."&sort=hot");	
@@ -56,10 +57,10 @@
 	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.1.1/normalize.min.css"></link>
 	<link rel="stylesheet" href="css/style.css"></link>
-	<link href='http://fonts.googleapis.com/css?family=Overlock' rel='stylesheet' type='text/css'>
-	<link href='http://fonts.googleapis.com/css?family=Chivo' rel='stylesheet' type='text/css'>
+	<link href='//fonts.googleapis.com/css?family=Overlock' rel='stylesheet' type='text/css'>
+	<link href='//fonts.googleapis.com/css?family=Chivo' rel='stylesheet' type='text/css'>
 	<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro' rel='stylesheet' type='text/css'>
-	<link href='http://fonts.googleapis.com/css?family=Raleway' rel='stylesheet' type='text/css'>
+	<link href='//fonts.googleapis.com/css?family=Raleway' rel='stylesheet' type='text/css'>
 		
 	</style>
 </head>

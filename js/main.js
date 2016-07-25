@@ -1,8 +1,8 @@
 $(document).ready(function() {
 	var loading = false;
 	$(window).scroll(function() {
-	    if (!loading && ($(window).scrollTop() >  $(document).height() - $(window).height() - 100)) {
-	        loading= true;
+		if (!loading && ($(window).scrollTop() >  $(document).height() - $(window).height() - 100)) {
+			loading= true;
 
 	        // your content loading call goes here.
 
@@ -18,20 +18,20 @@ $(document).ready(function() {
 				if (!clicked) {
 					var count = 0;
 					$.each(result, function(idx, li){
-				      $('.notification-list').append(li.append);
-				      count++;
-				    });
-				    if (count == 0) {
-				    	$('.notification-list').append("<li class=\"no-notifications\">No Recent Activity</li>\n"); 
-				    }
+						$('.notification-list').append(li.append);
+						count++;
+					});
+					if (count == 0) {
+						$('.notification-list').append("<li class=\"no-notifications\">No Recent Activity</li>\n"); 
+					}
 					$('.notification-list').append("<li role=\"separator\" class=\"divider\"></li>\n"); 
 					$('.notification-list').append("<li><a href=\"notifications.php\" class=\"seeAll\">See all</a></li>\n"); 
 					clicked = true;
 				}
-             },
+			},
 			error: function(xhr, desc, err) {
-			    console.log(xhr);
-			    console.log("Details: " + desc + "\nError:" + err);
+				console.log(xhr);
+				console.log("Details: " + desc + "\nError:" + err);
 			}
 		});
 	});
@@ -87,13 +87,13 @@ $(document).ready(function() {
 			url: 'upvote.php',
 			type: 'POST',
 			data: {'postid': postid,
-					'upvote': upvote,
-					'downvote': downvote},
+			'upvote': upvote,
+			'downvote': downvote},
 			success: function(result){
-             },
+			},
 			error: function(xhr, desc, err) {
-			    console.log(xhr);
-			    console.log("Details: " + desc + "\nError:" + err);
+				console.log(xhr);
+				console.log("Details: " + desc + "\nError:" + err);
 			}
 		});
 	}
@@ -140,23 +140,32 @@ $(document).ready(function() {
 			url: 'cUpvote.php',
 			type: 'POST',
 			data: {'commentid': commentid,
-					'cUpvote': cUpvote,
-					'cDownvote': cDownvote},
+			'cUpvote': cUpvote,
+			'cDownvote': cDownvote},
 			success: function(result){
-             },
+			},
 			error: function(xhr, desc, err) {
-			    console.log(xhr);
-			    console.log("Details: " + desc + "\nError:" + err);
+				console.log(xhr);
+				console.log("Details: " + desc + "\nError:" + err);
 			}
 		});
 	}
 	var text_max_comment = 200;
-    $('#comment-feedback').text(text_max_comment);
+	$('#comment-feedback').text(text_max_comment);
 
-    $('#comment').keyup(function() {
-        var text_length = $('#comment').val().length;
-        var text_remaining = text_max_comment - text_length;
+	$('#comment').keyup(function() {
+		var text_length = $('#comment').val().length;
+		var text_remaining = text_max_comment - text_length;
 
-        $('#comment-feedback').text(text_remaining);
+		$('#comment-feedback').text(text_remaining);
+	});
+    // ADD SLIDEDOWN ANIMATION TO DROPDOWN //
+    $('.dropdown').on('show.bs.dropdown', function(e){
+    	$(this).find('.dropdoown-menu').first().stop(true, true).slideDown(150);
     });
+
+  // ADD SLIDEUP ANIMATION TO DROPDOWN //
+  $('.dropdown').on('hide.bs.dropdown', function(e){
+  	$(this).find('.dropdown-menu').first().stop(true, true).slideUp(150);
+  });
 });

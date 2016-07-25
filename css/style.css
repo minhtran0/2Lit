@@ -97,7 +97,7 @@ body {
 }
 .comment-container {
 	font-family: 'Chivo', sans-serif;
-	padding: 10px;
+	padding: 7px;
 	margin-left: 15px;
 	margin-right: 15px;
 	margin-bottom: 2px;
@@ -111,23 +111,23 @@ body {
 }
 .comment-name {
 	font-size: 0.9em;
-	padding-bottom: 5px;
+	padding-bottom: 0px;
 }
 .comment, .score {
-	font-family: 'Chivo', sans-serif;
+	font-family: 'Source Sans Pro', sans-serif;
 	font-size: 1.1em;
 }
 .comment-time {
-	font-size: 0.8em;
+	font-size: 0.7em;
 }
 .cUpvote, .cDownvote {
-	color: #a9a9a9;
+	color: #C6E5D9;
 }
 .red {
-	color: red;
+	color: #D95B43;
 }
 .green {
-	color: green;
+	color: #79BD9A;
 }
 .send-style {
 	font-family: 'Chivo', sans-serif;
@@ -185,7 +185,9 @@ body {
 .lit-heading {
 	font-family: 'Chivo',sans-serif;
 }
-
+mark {
+	background-color: #79BD9A;
+}
 
 /* unvisited link */
 a:link .lit-heading {
@@ -209,4 +211,4 @@ a:hover .lit-heading {
 a:active .lit-heading {
    	color: rgb(217,91,67);
     text-decoration: none;
-}	
+}
